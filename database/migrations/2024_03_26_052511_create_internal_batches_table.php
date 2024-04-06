@@ -27,10 +27,10 @@ return new class extends Migration
             $table->bigInteger('mid_ppn');
             $table->string('transaction_amount');
             $table->bigInteger('settlement_audit_id');
-            $table->string('tax_payment');
-            $table->string('fee_mdr_merchant');
-            $table->string('fee_bank_merchant');
-            $table->string('bank_transfer');
+            $table->string('tax_payment')->nullable();
+            $table->string('fee_mdr_merchant')->nullable();
+            $table->string('fee_bank_merchant')->nullable();
+            $table->string('bank_transfer')->nullable();
             $table->string('created_by');
             $table->timestamps();
         });

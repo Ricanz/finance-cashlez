@@ -23,4 +23,5 @@
     <link href="{{ asset('cztemp/assets/plugins/global/plugins.bundle.css')}}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('cztemp/assets/css/style.bundle.css')}}" rel="stylesheet" type="text/css" />
     <!--end::Global Stylesheets Bundle-->
+    
 </head>

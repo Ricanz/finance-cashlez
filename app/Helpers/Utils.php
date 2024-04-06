@@ -33,6 +33,22 @@ class Utils
         }
     }
 
+    public static function uploadFile($image, $uuid)
+    {
+        try {
+            $imageName = $uuid . '.' . $image->extension();
+            if (env('APP_ENV') == 'production' || !env('APP_ENV')) {
+                $image->move('images', $imageName);
+            } else {
+                $image->move(public_path('images'), $imageName);
+            }
+            $path = url('images/' . $imageName);
+            return $path;
+        } catch (\Throwable $th) {    
+            return false;
+        }
+    }
+
     public static function generateToken()
     {
         return csrf_token();

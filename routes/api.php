@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('portal/login', [GeneralController::class, 'portalLogin']);
 Route::get('test', [GeneralController::class, 'test']);
+Route::post('/file/check', [GeneralController::class, 'check'])->name('fileCheck');
+Route::post('/file/upload', [GeneralController::class, 'upload'])->name('fileUpload');
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();

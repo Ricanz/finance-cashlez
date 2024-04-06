@@ -16,7 +16,6 @@ return new class extends Migration
         Schema::create('internal_transactions', function (Blueprint $table) {
             $table->id();
             $table->timestamp('settlement_date');
-            $table->string('');
             $table->string('retrieval_number');
             $table->string('transaction_amount');
             $table->string('bank_payment');

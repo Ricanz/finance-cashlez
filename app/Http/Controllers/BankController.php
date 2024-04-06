@@ -115,7 +115,7 @@ class BankController extends Controller
  
      public function data(Request $request) {
          $query = Bank::where('status', '!=', 'deleted')->orderBy('name');
- 
+
          return DataTables::of($query->get())->addIndexColumn()->make(true);
      }
 }

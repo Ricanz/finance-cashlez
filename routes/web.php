@@ -51,6 +51,8 @@ Route::middleware('auth')->group(function () {
 
     // Settlement
     Route::get('/settlement', [SettlementController::class, 'index'])->name('settlement.index');
+    Route::get('/settlement/data', [SettlementController::class, 'data'])->name('settlement.data');
+    Route::post('/settlement', [SettlementController::class, 'store'])->name('settlement.store');
 });
 
 require __DIR__.'/auth.php';

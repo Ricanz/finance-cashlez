@@ -19,9 +19,9 @@ return new class extends Migration
             $table->string('name');
             $table->string('reference_code');
             $table->string('email');
-            $table->string('created_by');
-            $table->string('modified_by');
-            $table->string('company_name');
+            $table->string('company_name')->nullable();
+            $table->string('created_by')->nullable();
+            $table->string('modified_by')->nullable();
             $table->timestamps();
         });
     }
