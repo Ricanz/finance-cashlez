@@ -17,6 +17,7 @@ class UploadBankDetail extends Model
         'transfer_date',
         'date',
         'statement_code',
+        'type_code',
         'description1',
         'description2',
         'created_by',

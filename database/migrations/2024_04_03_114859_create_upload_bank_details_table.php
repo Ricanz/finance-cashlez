@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('transfer_date', 150)->nullable();
             $table->string('date', 150)->nullable();
             $table->string('statement_code', 150)->nullable();
+            $table->string('type_code', 4)->nullable();
             $table->mediumText('description1')->nullable();
             $table->mediumText('description2')->nullable();
             $table->string('created_by', 150)->nullable();

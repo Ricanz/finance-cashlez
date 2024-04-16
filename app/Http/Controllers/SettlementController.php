@@ -67,6 +67,11 @@ class SettlementController extends Controller
                         foreach ($header as $index => $columnName) {
                             $column = strtolower(str_replace(" ", "_", $columnName));
                             $name = strtolower(str_replace(".", "", $column));
+                            if ($index == 5) {
+                                $name = 'description_2';
+                            } else if ($index == 4) {
+                                $name = 'description_1';
+                            }
                             $mappedRow[$name] = $row[$index] ?? null;
                         }
 
@@ -80,6 +85,12 @@ class SettlementController extends Controller
                 }
 
                 foreach ($mappedData as $key => $value) {
+                    $splits = explode('/', $value['description_2']);
+                    if ($value['description_1'] == 'Pbyrn Merchant ') {
+                        $typeCode = '001';
+                    } else {
+                        $typeCode = '002';
+                    }
                     UploadBankDetail::create([
                         'token_applicant' => $upload->token_applicant,
                         'account_no' => $value['account_no'],
@@ -88,7 +99,10 @@ class SettlementController extends Controller
                         'transfer_date' => $value['val_date'],
                         'date' => $value['date'],
                         'statement_code' => $value['reference_no'],
-                        'description1' => $value['description'],
+                        'type_code' => $typeCode,
+                        'description1' => $value['description_1'],
+                        'mid' => $splits[0] ? preg_replace('/\s+/','',$splits[0]) : '-',
+                        'merchant_name' => isset($splits[1]) ? preg_replace('/\s+/','',$splits[1]) : '-',
                         'created_by' => $user->name,
                         'modified_by' => $user->name
                     ]);

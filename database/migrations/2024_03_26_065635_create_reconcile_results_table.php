@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('reconcile_results', function (Blueprint $table) {
             $table->id();
+            $table->string('token_applicant');
             $table->bigInteger('statement_id');
             $table->bigInteger('request_id');
             $table->string('status');
@@ -26,6 +27,7 @@ return new class extends Migration
             $table->string('processor_payment');
             $table->string('internal_payment');
             $table->string('merchant_payment');
+            $table->string('merchant_name');
             $table->bigInteger('merchant_id');
             $table->string('transfer_amount');
             $table->string('tax_payment');

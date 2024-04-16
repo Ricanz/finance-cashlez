@@ -4,6 +4,7 @@ use App\Http\Controllers\BankController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SettlementController;
+use App\Http\Controllers\ReconcileController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -53,6 +54,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/settlement', [SettlementController::class, 'index'])->name('settlement.index');
     Route::get('/settlement/data', [SettlementController::class, 'data'])->name('settlement.data');
     Route::post('/settlement', [SettlementController::class, 'store'])->name('settlement.store');
+
+    // Reconcile
+    Route::get('/reconcile/{token}/proceed', [ReconcileController::class, 'proceed'])->name('reconcile.proceed');
+    
 });
 
 require __DIR__.'/auth.php';
