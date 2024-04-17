@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ReconcileExport;
 use App\Models\InternalBatch;
 use App\Models\InternalMerchant;
 use App\Models\InternalTransaction;
@@ -12,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
 class ReconcileController extends Controller
@@ -48,12 +50,14 @@ class ReconcileController extends Controller
                                         SUM(transaction_amount) as transaction_amount,
                                         SUM(merchant_fee_amount) as sum_merchant_fee')->where('batch_fk', $batch->batch_fk)->first();
 
-                        if ((float)$select->bank_payment === (float)$value->amount_credit) {
+                        $diff = abs((float)$select->bank_payment - (float)$value->amount_credit);
+                        // dd($diff);
+                        if ($diff == 1 || $diff == 0) {
                             $status = 'MATCH';
-                        } else if ((float)$select->bank_payment === (float)$value->amount_credit) {
+                        } else if ((float)$select->bank_payment !== (float)$value->amount_credit) {
                             $status = 'NOT_MATCH';
                         } else {
-                            $status = 'MATCH';
+                            $status = 'NOT_FOUND';
                         }
                         $trxSum = $trxSum + $select->bank_payment;
 
@@ -104,19 +108,46 @@ class ReconcileController extends Controller
         return  response()->json(['message' => 'Successfully upload data!', 'status' => true], 200);
 
         } catch (\Throwable $th) {
-            dd($th);
             DB::rollBack();
             return  response()->json(['message' => 'Error while uploading, try again', 'status' => false], 200);
         }
     }
 
     public function show($token_applicant){
-        return view('modules.reconcile.index');
+        $match = ReconcileResult::where('token_applicant', $token_applicant)->where('status', 'MATCH')->count();
+        $notMatch = ReconcileResult::where('token_applicant', $token_applicant)->where('status', 'NOT_MATCH')->count();
+        $notFound = ReconcileResult::where('token_applicant', $token_applicant)->where('status', 'NOT_FOUND')->count();
+
+        
+        return view('modules.reconcile.index', compact('match', 'notMatch', 'notFound', 'token_applicant'));
     }
 
-    public function data($token_applicant){
-        $query = ReconcileResult::with('merchant', 'bank_account')->where('token_applicant', $token_applicant)->get();
-        // dd($query[0]);
-        return DataTables::of($query)->addIndexColumn()->make(true);
+    public function data(Request $request, $token_applicant){
+        $query = ReconcileResult::with('merchant', 'bank_account')->where('token_applicant', $token_applicant);
+        if ($request->input('status') !== null) {
+            switch ($request->input('status')) {
+                case 'match':
+                    $status = 'MATCH';
+                    break;
+                case 'notMatch':
+                    $status = 'NOT_MATCH';
+                    break;
+                case 'notFound':
+                    $status = 'NOT_FOUND';
+                    break;
+                default:
+                    $status = 'NOT_FOUND';
+                    break;
+            }
+            $query->where('status', $status);
+        }
+        
+        return DataTables::of($query->get())->addIndexColumn()->make(true);
+    }
+
+    public function download($token_applicant) 
+    {
+        $filename = date('d-m-Y');
+        return Excel::download(new ReconcileExport($token_applicant), 'reconcile'.$filename.'.xlsx');
     }
 }

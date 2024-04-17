@@ -1,19 +1,75 @@
-{{-- <x-app-layout>
-    <div class="container">
-        <div class="card card-flush px-10 py-6 rounded-sm">
-            <h5>Settlement</h5>
-        </div>
-    </div>
-    
-</x-app-layout> --}}
-
+@php
+switch (request()->query('status')) {
+    case 'match':
+        $status = 'MATCH';
+        break;
+    case 'notMatch':
+        $status = 'NOT MATCH';
+        break;
+    case 'notFound':
+        $status = 'NOT FOUND';
+        break;
+    default:
+        $status = 'NOT FOUND';
+        break;
+}
+@endphp
 <x-app-layout>
     <div class="container">
         <div class="card card-flush px-10 py-6 rounded-sm">
+
+            <div class="d-flex flex-wrap justify-content-between">
+                <!--begin::Stats-->
+                <div class="d-flex flex-wrap">
+                    <div class="border border-gray-300 border-dashed rounded  w-300px py-3 px-4 me-6 mb-3">
+                        <a href={{ url('/reconcile/'.$token_applicant.'/show?status=match') }} class="card-body p-0 d-flex justify-content-between flex-column overflow-hidden">
+                            <!--begin::Hidden-->
+                            <div class="d-flex flex-stack flex-wrap flex-grow-1 px-2 pt-2 pb-3">
+                                <div class="me-2">
+                                    <span class="fw-bolder text-gray-800 d-block fs-3">Match</span>
+                                    <span class="text-gray-400 fw-bold">{{ $match }} Trx</span>
+                                </div>
+                                <div class="fw-bolder fs-5 text-primary">IDR Rp. 89.887.908</div>
+                            </div>
+                            <!--end::Hidden-->
+                        </a>
+                    </div>
+                    <div class="border border-gray-300 border-dashed rounded  w-300px py-3 px-4 me-6 mb-3">
+                        <a href={{ url('/reconcile/'.$token_applicant.'/show?status=notMatch') }} class="card-body p-0 d-flex justify-content-between flex-column overflow-hidden">
+                            <!--begin::Hidden-->
+                            <div class="d-flex flex-stack flex-wrap flex-grow-1 px-2 pt-2 pb-3">
+                                <div class="me-2">
+                                    <span class="fw-bolder text-gray-800 d-block fs-3">Not Match</span>
+                                    <span class="text-gray-400 fw-bold">{{ $notMatch }} Trx</span>
+                                </div>
+                                <div class="fw-bolder fs-5 text-primary">IDR Rp. 89.887.908</div>
+                            </div>
+                            <!--end::Hidden-->
+                        </a>
+                    </div>
+                    <div class="border border-gray-300 border-dashed rounded  w-300px py-3 px-4 me-6 mb-3">
+                        <a href={{ url('/reconcile/'.$token_applicant.'/show?status=notFound') }} class="card-body p-0 d-flex justify-content-between flex-column overflow-hidden">
+                            <!--begin::Hidden-->
+                            <div class="d-flex flex-stack flex-wrap flex-grow-1 px-2 pt-2 pb-3">
+                                <div class="me-2">
+                                    <span class="fw-bolder text-gray-800 d-block fs-3">Not Found</span>
+                                    <span class="text-gray-400 fw-bold">{{ $notFound }} Trx</span>
+                                </div>
+                                <div class="fw-bolder fs-5 text-primary">IDR Rp. 89.887.908</div>
+                            </div>
+                            <!--end::Hidden-->
+                        </a>
+                    </div>
+                </div>
+            </div>
             <!--begin::Wrapper-->
             <div class="d-flex flex-stack mb-5">
                 <!--begin::Search-->
                 <div class="card-title">
+                    @if (request()->query('status') !== null)
+                        <div class="fw-bolder fs-3 my-4">Result For {{ $status }} Transaction</div>
+                    @endif
+
                     <!--begin::Search-->
                     <div class="d-flex align-items-center position-relative my-1">
                         <!--begin::Svg Icon | path: icons/duotune/general/gen021.svg-->
@@ -48,6 +104,7 @@
             <!--end::Wrapper-->
 
             <!--begin::Datatable-->
+            
             <table id="kt_datatable_example_1" class="table align-middle table-row-dashed fs-6 gy-5">
                 <thead>
                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">

@@ -59,6 +59,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/reconcile/{token}/proceed', [ReconcileController::class, 'proceed'])->name('reconcile.proceed');
     Route::get('/reconcile/{token}/show', [ReconcileController::class, 'show'])->name('reconcile.show');
     Route::get('/reconcile/{token}/data', [ReconcileController::class, 'data'])->name('reconcile.data');
+    Route::get('/reconcile/{token}/download', [ReconcileController::class, 'download'])->name('reconcile.download');
     
 });
 
