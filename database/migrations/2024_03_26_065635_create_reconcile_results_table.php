@@ -36,6 +36,7 @@ return new class extends Migration
             $table->string('bank_transfer');
             $table->string('created_by');
             $table->string('modified_by');
+            $table->timestamp('settlement_date');
             $table->timestamps();
         });
     }

@@ -14,6 +14,7 @@ class UploadBank extends Model
         'processor',
         'process_status',
         'start_recon_by',
+        'is_reconcile',
         'created_by',
         'created_by',
         'modified_by',
@@ -22,7 +23,6 @@ class UploadBank extends Model
         'updated_at'
     ];
 
-    
     public function detail()
     {
         return $this->hasMany(UploadBankDetail::class, 'token_applicant', 'token_applicant');

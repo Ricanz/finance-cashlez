@@ -30,7 +30,25 @@ class ReconcileResult extends Model
         'is_reconcile',
         'created_by',
         'modified_by',
+        'settlement_date',
         'created_at',
         'updated_at'
     ];
+
+
+    public function merchant()
+    {
+        return $this->belongsTo(InternalMerchant::class, 'merchant_id', 'id');
+    }
+
+    public function bank_account()
+    {
+        return $this->hasOneThrough(
+            BankAccount::class,
+            InternalMerchant::class,
+            'id',
+            'merchant_id',
+            'merchant_id'
+        );
+    }
 }

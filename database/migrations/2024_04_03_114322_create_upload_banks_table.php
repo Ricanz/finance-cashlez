@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('processor', 150)->nullable();
             $table->string('process_status', 150)->nullable();
             $table->string('start_recon_by', 150)->nullable();
+            $table->boolean('is_reconcile')->default(false);
             $table->string('created_by', 150)->nullable();
             $table->string('updated_by', 150)->nullable();
             $table->string('file_id', 255)->nullable();

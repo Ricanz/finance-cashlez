@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Yajra\DataTables\Facades\DataTables;
 
 class ReconcileController extends Controller
 {
@@ -85,12 +86,16 @@ class ReconcileController extends Controller
                         // 'fee_bank_merchant',
                         // 'bank_transfer',
                         'created_by' => 'System',
-                        'modified_by' => null
+                        'modified_by' => null,
+                        'settlement_date' => $internalBatch[0]->created_at
                     ]);
                     if ($reconcile) {
                         $det = UploadBankDetail::where('id', $value->id)->first();
                         $det->is_reconcile = true;
                         $det->save();
+
+                        $data->is_reconcile = true;
+                        $data->save();
                     }
                 }
             }
@@ -103,5 +108,15 @@ class ReconcileController extends Controller
             DB::rollBack();
             return  response()->json(['message' => 'Error while uploading, try again', 'status' => false], 200);
         }
+    }
+
+    public function show($token_applicant){
+        return view('modules.reconcile.index');
+    }
+
+    public function data($token_applicant){
+        $query = ReconcileResult::with('merchant', 'bank_account')->where('token_applicant', $token_applicant)->get();
+        // dd($query[0]);
+        return DataTables::of($query)->addIndexColumn()->make(true);
     }
 }

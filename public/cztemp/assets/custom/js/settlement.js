@@ -97,18 +97,26 @@ var KTDatatablesServerSide = (function () {
                 {
                     targets: -1,
                     orderable: false,
-                    className: "text-end",
+                    className: "text-center",
+                    width: "200px",
                     render: function (data, type, row) {
+                        if (!row.is_reconcile) {
+                            return `
+                                <a href="javascript:void(0)" id="reconcile_${data}" onclick="reconcile('${data}')" class="btn btn-primary btn-active-light-primary btn-sm rounded-sm">
+                                    Reconcile
+                                </a>
+                            `;
+                        }
                         return `
-                            <a href="javascript:void(0)" id="reconcile_${data}" onclick="reconcile('${data}')" class="btn btn-primary btn-active-light-primary btn-sm rounded-sm">
-                                Reconcile
-                            </a>
+                            <div class="d-flex">
+                                <a href="/reconcile/${data}/show" class="btn btn-success btn-active-light-success btn-sm rounded-sm">
+                                    View
+                                </a>
+                                <a href="/reconcile/${data}/download" class="btn btn-light-warning btn-sm rounded-sm mx-2">
+                                    Download
+                                </a>
+                            </div>
                         `;
-                        // return `
-                        //     <a href="/reconcile/${data}" class="btn btn-light btn-active-light-primary btn-sm rounded-sm">
-                        //         Reconcile
-                        //     </a>
-                        // `;
                     },
                 },
             ],
