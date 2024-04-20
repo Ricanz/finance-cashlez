@@ -180,7 +180,20 @@ function mrcDetail(tokenApplicant) {
         type: "GET",
         success: function (response) {
             console.log(response);
-            document.getElementById("settlementDate").innerHTML = "halo";
+            var data = response.data
+            document.getElementById("settlementDate").innerHTML = to_date_time(data.settlement_date);
+            document.getElementById("batch").innerHTML = data.batch_fk;
+            document.getElementById("bankType").innerHTML = '-';
+            document.getElementById("mrc").innerHTML = data.merchant.reference_code;
+            document.getElementById("merchantName").innerHTML = data.merchant.name;
+            document.getElementById("grossTrf").innerHTML = '-';
+            document.getElementById("bankAdmin").innerHTML = '-';
+            document.getElementById("netTransfer").innerHTML = `Rp. ${to_rupiah(data.transfer_amount)} `;
+            document.getElementById("accountNumber").innerHTML = data.bank_account.account_number;
+            document.getElementById("bankCode").innerHTML = data.bank_account.bank_code;
+            document.getElementById("bankName").innerHTML = data.bank_account.bank_name;
+            document.getElementById("accounttHolder").innerHTML = data.bank_account.account_holder;
+            document.getElementById("accountEmail").innerHTML = data.merchant.email;
         },
         error: function (xhr, status, error) {
             Swal.fire({

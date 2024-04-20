@@ -39,7 +39,7 @@
                     <label class="d-flex align-items-center mb-2 fs-4 ">
                         <span class="w-150px text-start mx-4 fw-bold">Settlement Date</span>
                         <span class="w-10px text-start mx-4">:</span>
-                        <span class="text-start" id="settlementDate">Test</span>
+                        <span class="text-start" id="settlementDate"></span>
                     </label>
                 </div>
                 <!--end::Input group-->
@@ -50,7 +50,7 @@
                     <label class="d-flex align-items-center mb-2 fs-4 ">
                         <span class="w-150px text-start mx-4 fw-bold">Batch</span>
                         <span class="w-10px text-start mx-4">:</span>
-                        <span class="text-start" id="">Test</span>
+                        <span class="text-start" id="batch"></span>
                     </label>
                 </div>
                 <!--end::Input group-->
@@ -61,18 +61,7 @@
                     <label class="d-flex align-items-center mb-2 fs-4 ">
                         <span class="w-150px text-start mx-4 fw-bold">Bank Type</span>
                         <span class="w-10px text-start mx-4">:</span>
-                        <span class="text-start">Test</span>
-                    </label>
-                </div>
-                <!--end::Input group-->
-
-                <!--begin::Input group-->
-                <div class="d-flex flex-column mb-2 fv-row">
-                    <!--begin::Label-->
-                    <label class="d-flex align-items-center mb-2 fs-4 ">
-                        <span class="w-150px text-start mx-4 fw-bold">Bank Type</span>
-                        <span class="w-10px text-start mx-4">:</span>
-                        <span class="text-start">Test</span>
+                        <span class="text-start" id="bankType"></span>
                     </label>
                 </div>
                 <!--end::Input group-->
@@ -83,7 +72,7 @@
                     <label class="d-flex align-items-center mb-2 fs-4 ">
                         <span class="w-150px text-start mx-4 fw-bold">MRC</span>
                         <span class="w-10px text-start mx-4">:</span>
-                        <span class="text-start">Test</span>
+                        <span class="text-start" id="mrc"></span>
                     </label>
                 </div>
                 <!--end::Input group-->
@@ -94,7 +83,7 @@
                     <label class="d-flex align-items-center mb-2 fs-4 ">
                         <span class="w-150px text-start mx-4 fw-bold">Merchant Name</span>
                         <span class="w-10px text-start mx-4">:</span>
-                        <span class="text-start">Test</span>
+                        <span class="text-start" id="merchantName"></span>
                     </label>
                 </div>
                 <!--end::Input group-->
@@ -105,7 +94,7 @@
                     <label class="d-flex align-items-center mb-2 fs-4 ">
                         <span class="w-150px text-start mx-4 fw-bold">Gross Trf Amount</span>
                         <span class="w-10px text-start mx-4">:</span>
-                        <span class="text-start">Test</span>
+                        <span class="text-start" id="grossTrf"></span>
                     </label>
                 </div>
                 <!--end::Input group-->
@@ -116,7 +105,7 @@
                     <label class="d-flex align-items-center mb-2 fs-4 ">
                         <span class="w-150px text-start mx-4 fw-bold">Bank Admin</span>
                         <span class="w-10px text-start mx-4">:</span>
-                        <span class="text-start">Test</span>
+                        <span class="text-start" id="bankAdmin"></span>
                     </label>
                 </div>
                 <!--end::Input group-->
@@ -127,7 +116,7 @@
                     <label class="d-flex align-items-center mb-2 fs-4 ">
                         <span class="w-150px text-start mx-4 fw-bold">Net Trf</span>
                         <span class="w-10px text-start mx-4">:</span>
-                        <span class="text-start">Test</span>
+                        <span class="text-start" id="netTransfer"></span>
                     </label>
                 </div>
                 <!--end::Input group-->
@@ -138,7 +127,7 @@
                     <label class="d-flex align-items-center mb-2 fs-4 ">
                         <span class="w-150px text-start mx-4 fw-bold">Account Number</span>
                         <span class="w-10px text-start mx-4">:</span>
-                        <span class="text-start">Test</span>
+                        <span class="text-start" id="accountNumber"></span>
                     </label>
                 </div>
                 <!--end::Input group-->
@@ -149,7 +138,7 @@
                     <label class="d-flex align-items-center mb-2 fs-4 ">
                         <span class="w-150px text-start mx-4 fw-bold">Bank Code</span>
                         <span class="w-10px text-start mx-4">:</span>
-                        <span class="text-start">Test</span>
+                        <span class="text-start" id="bankCode"></span>
                     </label>
                 </div>
                 <!--end::Input group-->
@@ -160,7 +149,7 @@
                     <label class="d-flex align-items-center mb-2 fs-4 ">
                         <span class="w-150px text-start mx-4 fw-bold">Bank Name</span>
                         <span class="w-10px text-start mx-4">:</span>
-                        <span class="text-start">Test</span>
+                        <span class="text-start" id="bankName"></span>
                     </label>
                 </div>
                 <!--end::Input group-->
@@ -171,7 +160,7 @@
                     <label class="d-flex align-items-center mb-2 fs-4 ">
                         <span class="w-150px text-start mx-4 fw-bold">Account Holder</span>
                         <span class="w-10px text-start mx-4">:</span>
-                        <span class="text-start">Test</span>
+                        <span class="text-start" id="accounttHolder"></span>
                     </label>
                 </div>
                 <!--end::Input group-->
@@ -182,7 +171,7 @@
                     <label class="d-flex align-items-center mb-2 fs-4 ">
                         <span class="w-150px text-start mx-4 fw-bold">Account Email</span>
                         <span class="w-10px text-start mx-4">:</span>
-                        <span class="text-start">Test</span>
+                        <span class="text-start" id="accountEmail"></span>
                     </label>
                 </div>
                 <!--end::Input group-->
