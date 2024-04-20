@@ -37,6 +37,7 @@ class ReconcileController extends Controller
                 $trxSum = 0;
                 $trxAmount = 0;
                 $trxMerchantSum = 0;
+                $sumCreditAmount = 0;
                 if ($internalBatch) {
                     foreach ($internalBatch as $key => $batch) {
                         $merchant_id = $batch->merchant_id;
@@ -48,18 +49,11 @@ class ReconcileController extends Controller
                         $select = InternalTransaction::selectRaw('
                                         SUM(bank_payment) as bank_payment, 
                                         SUM(transaction_amount) as transaction_amount,
-                                        SUM(merchant_fee_amount) as sum_merchant_fee')->where('batch_fk', $batch->batch_fk)->first();
+                                        SUM(merchant_fee_amount) as sum_merchant_fee')
+                                    ->where('batch_fk', $batch->batch_fk)->first();
 
-                        $diff = abs((float)$select->bank_payment - (float)$value->amount_credit);
-                        // dd($diff);
-                        if ($diff == 1 || $diff == 0) {
-                            $status = 'MATCH';
-                        } else if ((float)$select->bank_payment !== (float)$value->amount_credit) {
-                            $status = 'NOT_MATCH';
-                        } else {
-                            $status = 'NOT_FOUND';
-                        }
                         $trxSum = $trxSum + $select->bank_payment;
+                        $sumCreditAmount = $sumCreditAmount + (float)$value->amount_credit;
 
                         $trxAmount = $trxAmount + $select->transaction_amount;
 
@@ -69,6 +63,19 @@ class ReconcileController extends Controller
 
                     $batch_fk = Str::beforeLast($batch_fk, ', ');
                     $tid = Str::beforeLast($tid, ', ');
+
+                    $rounded_value = round((int)$sumCreditAmount);
+                    $amount_credit = number_format($rounded_value, 0, '', '');
+
+                    $diff = abs((float)$trxSum - (float)$sumCreditAmount);
+                    
+                    if ($diff == 1 || $diff == 0) {
+                        $status = 'MATCH';
+                    } else if ((float)$select->bank_payment !== (float)$value->amount_credit) {
+                        $status = 'NOT_MATCH';
+                    } else {
+                        $status = 'NOT_FOUND';
+                    }
 
                     $reconcile = ReconcileResult::create([
                         'token_applicant' => $token_applicant,
@@ -85,6 +92,8 @@ class ReconcileController extends Controller
                         'merchant_payment' => $trxMerchantSum, // bank_payment - merchant_fee_amount
                         'merchant_id' => $merchant_id,
                         'transfer_amount' => $sumTransaction, // transaction_amount di internal_batch
+                        'bank_settlement_amount' => $amount_credit, // bank_settlement
+                        'dispute_amount' => $diff, // dispute_amount
                         // 'tax_payment',
                         // 'fee_mdr_merchant',
                         // 'fee_bank_merchant',
@@ -108,6 +117,7 @@ class ReconcileController extends Controller
         return  response()->json(['message' => 'Successfully upload data!', 'status' => true], 200);
 
         } catch (\Throwable $th) {
+            dd($th);
             DB::rollBack();
             return  response()->json(['message' => 'Error while uploading, try again', 'status' => false], 200);
         }
@@ -115,11 +125,14 @@ class ReconcileController extends Controller
 
     public function show($token_applicant){
         $match = ReconcileResult::where('token_applicant', $token_applicant)->where('status', 'MATCH')->count();
-        $notMatch = ReconcileResult::where('token_applicant', $token_applicant)->where('status', 'NOT_MATCH')->count();
-        $notFound = ReconcileResult::where('token_applicant', $token_applicant)->where('status', 'NOT_FOUND')->count();
+        $dispute = ReconcileResult::where('token_applicant', $token_applicant)->whereIn('status', ['NOT_MATCH', 'NOT_FOUND'])->count();
+        $onHold = ReconcileResult::where('token_applicant', $token_applicant)->where('status', 'NOT_FOUND')->count();
 
+        $sumMatch = ReconcileResult::where('token_applicant', $token_applicant)->where('status', 'MATCH')->sum('total_sales');
+        $sumDispute = ReconcileResult::where('token_applicant', $token_applicant)->whereIn('status', ['NOT_MATCH', 'NOT_FOUND'])->sum('total_sales');
+        $sumHold = ReconcileResult::where('token_applicant', $token_applicant)->where('status', 'NOT_FOUND')->sum('total_sales');
         
-        return view('modules.reconcile.index', compact('match', 'notMatch', 'notFound', 'token_applicant'));
+        return view('modules.reconcile.index', compact('match', 'dispute', 'onHold', 'token_applicant', 'sumMatch', 'sumDispute', 'sumHold'));
     }
 
     public function data(Request $request, $token_applicant){
@@ -127,19 +140,19 @@ class ReconcileController extends Controller
         if ($request->input('status') !== null) {
             switch ($request->input('status')) {
                 case 'match':
-                    $status = 'MATCH';
+                    $status = ['MATCH'];
                     break;
-                case 'notMatch':
-                    $status = 'NOT_MATCH';
+                case 'dispute':
+                    $status = ['NOT_MATCH', 'NOT_FOUND'];
                     break;
-                case 'notFound':
-                    $status = 'NOT_FOUND';
+                case 'onHold':
+                    $status = ['NOT_FOUND'];
                     break;
                 default:
-                    $status = 'NOT_FOUND';
+                    $status = ['NOT_FOUND'];
                     break;
             }
-            $query->where('status', $status);
+            $query->whereIn('status', $status);
         }
         
         return DataTables::of($query->get())->addIndexColumn()->make(true);
@@ -149,5 +162,12 @@ class ReconcileController extends Controller
     {
         $filename = date('d-m-Y');
         return Excel::download(new ReconcileExport($token_applicant), 'reconcile'.$filename.'.xlsx');
+    }
+
+    public function mrcDetail($token_applicant)
+    {
+        $data = ReconcileResult::with('merchant', 'bank_account')->where('token_applicant', $token_applicant)->first();
+
+        return  response()->json(['data' => $data, 'message' => 'Successfully get data!', 'status' => true], 200);
     }
 }

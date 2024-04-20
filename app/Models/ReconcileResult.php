@@ -23,6 +23,8 @@ class ReconcileResult extends Model
         'merchant_name',
         'merchant_id',
         'transfer_amount',
+        'bank_settlement_amount',
+        'dispute_amount',
         'tax_payment',
         'fee_mdr_merchant',
         'fee_bank_merchant',

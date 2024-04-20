@@ -30,6 +30,7 @@ return new class extends Migration
             $table->string('merchant_name');
             $table->bigInteger('merchant_id');
             $table->string('transfer_amount');
+            $table->string('bank_settlement_amount');
             $table->string('tax_payment');
             $table->string('fee_mdr_merchant');
             $table->string('fee_bank_merchant');

@@ -47,6 +47,9 @@ var KTDatatablesServerSide = (function () {
                 { data: "mid" },
                 { data: "merchant.reference_code" },
                 { data: "merchant.name" },
+                { data: "internal_payment" },
+                { data: "bank_settlement_amount" },
+                { data: "dispute_amount" },
                 { data: "transfer_amount" },
                 { data: "bank_account.account_number" },
                 { data: "bank_account.bank_code" },
@@ -89,9 +92,9 @@ var KTDatatablesServerSide = (function () {
                     width: "50px",
                     render: function (data, type, row) {
                         return `
-                            <a href="javascript:void(0)" id="mrcDetail_${data}" onclick="mrcDetail('${data}')" class="btn btn-light-primary btn-active-primary btn-sm rounded-sm">
-                                ${data}
-                            </a>
+                            <div class="d-flex justify-content-end">
+                                <a href="#" class="btn btn-light-primary me-3 rounded-sm" data-bs-toggle="modal" data-bs-target="#kt_modal_new_target" onclick="mrcDetail('${row.token_applicant}')">${data}</a>
+                            </div>
                         `;
                     }
                 },
@@ -106,6 +109,33 @@ var KTDatatablesServerSide = (function () {
                 },
                 {
                     targets: 7,
+                    orderable: true,
+                    className: "text-start",
+                    width: "150px",
+                    render: function (data, type, row) {
+                        return to_rupiah(data);
+                    },
+                },
+                {
+                    targets: 8,
+                    orderable: true,
+                    className: "text-start",
+                    width: "150px",
+                    render: function (data, type, row) {
+                        return to_rupiah(data);
+                    },
+                },
+                {
+                    targets: 9,
+                    orderable: true,
+                    className: "text-start",
+                    width: "150px",
+                    render: function (data, type, row) {
+                        return to_rupiah(data);
+                    },
+                },
+                {
+                    targets: 10,
                     orderable: true,
                     className: "text-start",
                     width: "150px",
@@ -143,6 +173,35 @@ var KTDatatablesServerSide = (function () {
         },
     };
 })();
+
+function mrcDetail(tokenApplicant) {
+    $.ajax({
+        url: "/mrc/" + tokenApplicant + "/detail",
+        type: "GET",
+        success: function (response) {
+            console.log(response);
+            document.getElementById("settlementDate").innerHTML = "halo";
+        },
+        error: function (xhr, status, error) {
+            Swal.fire({
+                text: "Failed to delete the record.",
+                icon: "error",
+                buttonsStyling: false,
+                confirmButtonText: "Ok, got it!",
+                customClass: {
+                    confirmButton: "btn fw-bold btn-primary",
+                },
+            });
+        },
+    });
+}
+
+$( document ).ready(function() {
+    
+    $("#mrcDetail").on("click", function (event) {
+        console.log(event);
+    })
+});
 
 KTUtil.onDOMContentLoaded(function () {
     KTDatatablesServerSide.init();

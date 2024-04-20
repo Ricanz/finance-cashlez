@@ -167,7 +167,11 @@ function reconcile(token) {
             $.ajax({
                 url: "/reconcile/" + token + '/proceed',
                 type: "GET",
+                beforeSend: function() {
+                    swal.showLoading();
+                },
                 success: function (response) {
+                    swal.hideLoading();
                     Swal.fire({
                         text: "You have reconcile the data!",
                         icon: "success",
@@ -181,6 +185,7 @@ function reconcile(token) {
                     });
                 },
                 error: function (xhr, status, error) {
+                    swal.hideLoading();
                     Swal.fire({
                         text: "Failed to reconcile the record.",
                         icon: "error",

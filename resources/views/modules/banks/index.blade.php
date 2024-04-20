@@ -28,9 +28,7 @@
 
                 <!--begin::Toolbar-->
                 <div class="d-flex justify-content-end" data-kt-docs-table-toolbar="base">
-                    <!--begin::Filter-->
                     <a href="#" class="btn btn-light-primary me-3 rounded-sm" data-bs-toggle="modal" data-bs-target="#kt_modal_new_target">Add New Record</a>
-                    <!--end::Filter-->
                 </div>
                 <!--end::Toolbar-->
 

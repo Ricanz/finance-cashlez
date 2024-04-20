@@ -69,7 +69,7 @@
                     </div>
                 </div>
                 <div class="menu-item">
-                    <a class="menu-link" href="/banks">
+                    <a class="menu-link {{ Str::startsWith(request()->path(), 'banks') ? 'active' : '' }}" href="/banks">
                         <span class="menu-icon">
                             <i class="bi bi-layers fs-3"></i>
                         </span>
@@ -82,7 +82,7 @@
                     </div>
                 </div>
                 <div class="menu-item">
-                    <a class="menu-link" href="/settlement">
+                    <a class="menu-link {{ Str::startsWith(request()->path(), 'settlement') ? 'active' : '' }}" href="/settlement">
                         <span class="menu-icon">
                             <i class="bi bi-archive fs-3"></i>
                         </span>
@@ -90,7 +90,7 @@
                     </a>
                 </div>
                 <div class="menu-item">
-                    <a class="menu-link" href="/banks">
+                    <a class="menu-link {{ Str::startsWith(request()->path(), 'reconcile') ? 'active' : '' }}" href="/banks">
                         <span class="menu-icon">
                             <i class="bi bi-shield-check fs-3"></i>
                         </span>

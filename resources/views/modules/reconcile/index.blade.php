@@ -3,14 +3,14 @@ switch (request()->query('status')) {
     case 'match':
         $status = 'MATCH';
         break;
-    case 'notMatch':
-        $status = 'NOT MATCH';
+    case 'dispute':
+        $status = 'DISPUTE';
         break;
-    case 'notFound':
-        $status = 'NOT FOUND';
+    case 'onHold':
+        $status = 'ON HOLD';
         break;
     default:
-        $status = 'NOT FOUND';
+        $status = 'DISPUTE';
         break;
 }
 @endphp
@@ -29,33 +29,33 @@ switch (request()->query('status')) {
                                     <span class="fw-bolder text-gray-800 d-block fs-3">Match</span>
                                     <span class="text-gray-400 fw-bold">{{ $match }} Trx</span>
                                 </div>
-                                <div class="fw-bolder fs-5 text-primary">IDR Rp. 89.887.908</div>
+                                <div class="fw-bolder fs-5 text-primary">IDR Rp. {{ number_format($sumMatch) }}</div>
                             </div>
                             <!--end::Hidden-->
                         </a>
                     </div>
                     <div class="border border-gray-300 border-dashed rounded  w-300px py-3 px-4 me-6 mb-3">
-                        <a href={{ url('/reconcile/'.$token_applicant.'/show?status=notMatch') }} class="card-body p-0 d-flex justify-content-between flex-column overflow-hidden">
+                        <a href={{ url('/reconcile/'.$token_applicant.'/show?status=dispute') }} class="card-body p-0 d-flex justify-content-between flex-column overflow-hidden">
                             <!--begin::Hidden-->
                             <div class="d-flex flex-stack flex-wrap flex-grow-1 px-2 pt-2 pb-3">
                                 <div class="me-2">
-                                    <span class="fw-bolder text-gray-800 d-block fs-3">Not Match</span>
-                                    <span class="text-gray-400 fw-bold">{{ $notMatch }} Trx</span>
+                                    <span class="fw-bolder text-gray-800 d-block fs-3">Dispute</span>
+                                    <span class="text-gray-400 fw-bold">{{ $dispute }} Trx</span>
                                 </div>
-                                <div class="fw-bolder fs-5 text-primary">IDR Rp. 89.887.908</div>
+                                <div class="fw-bolder fs-5 text-primary">IDR Rp. {{ number_format($sumDispute) }}</div>
                             </div>
                             <!--end::Hidden-->
                         </a>
                     </div>
                     <div class="border border-gray-300 border-dashed rounded  w-300px py-3 px-4 me-6 mb-3">
-                        <a href={{ url('/reconcile/'.$token_applicant.'/show?status=notFound') }} class="card-body p-0 d-flex justify-content-between flex-column overflow-hidden">
+                        <a href={{ url('/reconcile/'.$token_applicant.'/show?status=onHold') }} class="card-body p-0 d-flex justify-content-between flex-column overflow-hidden">
                             <!--begin::Hidden-->
                             <div class="d-flex flex-stack flex-wrap flex-grow-1 px-2 pt-2 pb-3">
                                 <div class="me-2">
-                                    <span class="fw-bolder text-gray-800 d-block fs-3">Not Found</span>
-                                    <span class="text-gray-400 fw-bold">{{ $notFound }} Trx</span>
+                                    <span class="fw-bolder text-gray-800 d-block fs-3">On Hold</span>
+                                    <span class="text-gray-400 fw-bold">{{ $onHold }} Trx</span>
                                 </div>
-                                <div class="fw-bolder fs-5 text-primary">IDR Rp. 89.887.908</div>
+                                <div class="fw-bolder fs-5 text-primary">IDR Rp. {{ number_format($sumHold) }}</div>
                             </div>
                             <!--end::Hidden-->
                         </a>
@@ -95,7 +95,7 @@ switch (request()->query('status')) {
                 <!--begin::Toolbar-->
                 <div class="d-flex justify-content-end" data-kt-docs-table-toolbar="base">
                     <!--begin::Filter-->
-                    <a href="#" class="btn btn-light-warning me-3 rounded-sm">Download</a>
+                    <a href="{{ url('/reconcile/'.$token_applicant.'/download') }} " class="btn btn-light-warning me-3 rounded-sm">Download</a>
                     <!--end::Filter-->
                 </div>
                 <!--end::Toolbar-->
@@ -115,6 +115,9 @@ switch (request()->query('status')) {
                         <th>MID</th>
                         <th>MRC</th>
                         <th>Merchant Name</th>
+                        <th>BO Settlement</th>
+                        <th>Bank Settlement</th>
+                        <th>Dispute Amount</th>
                         <th>Net Transfer</th>
                         <th>Account Number</th>
                         <th>Bank Code</th>
@@ -128,6 +131,7 @@ switch (request()->query('status')) {
             <!--end::Datatable-->
         </div>
     </div>
+    @include('/modules/reconcile/mrc-modal')
 
     @section('scripts')
         <script src="{{ asset('cztemp/assets/custom/js/reconcile.js') }}"></script>
