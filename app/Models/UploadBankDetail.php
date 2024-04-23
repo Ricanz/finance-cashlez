@@ -26,4 +26,10 @@ class UploadBankDetail extends Model
         'created_at',
         'updated_at'
     ];
+
+    public function header()
+    {
+        return $this->belongsTo(UploadBank::class, 'token_applicant', 'token_applicant');
+    }
+
 }

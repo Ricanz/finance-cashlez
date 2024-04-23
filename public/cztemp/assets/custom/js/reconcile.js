@@ -3,7 +3,7 @@
 var KTDatatablesServerSide = (function () {
     var dt;
     var url = window.location.href;
-    var uuid = '';
+    var uuid = ''; var url = '';
     var status = '';
     const uuidPattern = /\/reconcile\/([0-9a-fA-F-]+)\/show/;
     const statusPattern = /[?&]status=([^&#]*)/;
@@ -12,8 +12,9 @@ var KTDatatablesServerSide = (function () {
 
     if (uuidMatch && uuidMatch[1]) {
         uuid = uuidMatch[1];
+        url = `/reconcile/${uuid}/data${status}`;
     } else {
-        console.error('UUID not found in URL');
+        url = `reconcile/data/${status}`
     }
 
     if (statusMatch && statusMatch[1]) {
@@ -21,7 +22,6 @@ var KTDatatablesServerSide = (function () {
     } else {
         status = ''
     }
-
 
     var initDatatable = function () {
         dt = $("#kt_datatable_example_1").DataTable({
@@ -37,7 +37,7 @@ var KTDatatablesServerSide = (function () {
                 className: "row-selected",
             },
             ajax: {
-                url: `/reconcile/${uuid}/data${status}`,
+                url
             },
             columns: [
                 { data: "id" },
@@ -45,8 +45,8 @@ var KTDatatablesServerSide = (function () {
                 { data: "batch_fk" },
                 { data: "processor_payment" },
                 { data: "mid" },
-                { data: "merchant.reference_code" },
                 { data: "merchant.name" },
+                { data: "status" },
                 { data: "internal_payment" },
                 { data: "bank_settlement_amount" },
                 { data: "dispute_amount" },
@@ -82,30 +82,46 @@ var KTDatatablesServerSide = (function () {
                     className: "text-center",
                     width: "50px",
                     render: function (data, type, row) {
-                        return data;
+                        return `
+                            <div class="d-flex justify-content-center mb-1">
+                            ${data}
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <a href="#" class="btn btn-sm btn-light-primary me-3 rounded-sm" data-bs-toggle="modal" data-bs-target="#kt_modal_new_target" onclick="mrcDetail('${row.token_applicant}')">${row.merchant.reference_code}</a>
+                            </div>
+                        `;
                     },
                 },
                 {
                     targets: 5,
                     orderable: true,
                     className: "text-center",
-                    width: "50px",
+                    width: "30px",
                     render: function (data, type, row) {
-                        return `
-                            <div class="d-flex justify-content-end">
-                                <a href="#" class="btn btn-light-primary me-3 rounded-sm" data-bs-toggle="modal" data-bs-target="#kt_modal_new_target" onclick="mrcDetail('${row.token_applicant}')">${data}</a>
-                            </div>
-                        `;
-                    }
+                        return data;
+                    },
                 },
                 {
                     targets: 6,
                     orderable: true,
                     className: "text-center",
-                    width: "30px",
+                    width: "50px",
                     render: function (data, type, row) {
-                        return data;
-                    },
+                        var status = ''; var badge = '';
+                        if (data == 'MATCH') {
+                            status = 'match'
+                            badge = 'badge-light-success'
+                        } else if(data == 'NOT_MATCH' || data == 'NOT_FOUND'){
+                            status = 'dispute'
+                            badge = 'badge-light-danger'
+                        } else {
+                            status = 'on hold'
+                            badge = 'badge-light-warning'
+                        }
+                        return `
+                            <span class="badge ${badge}">${status}</span>
+                        `;
+                    }
                 },
                 {
                     targets: 7,
@@ -182,7 +198,7 @@ function mrcDetail(tokenApplicant) {
             console.log(response);
             var data = response.data
             document.getElementById("settlementDate").innerHTML = to_date_time(data.settlement_date);
-            document.getElementById("batch").innerHTML = data.batch_fk;
+            document.getElementById("batch").innerHTML = data.batch_fk;``
             document.getElementById("bankType").innerHTML = '-';
             document.getElementById("mrc").innerHTML = data.merchant.reference_code;
             document.getElementById("merchantName").innerHTML = data.merchant.name;

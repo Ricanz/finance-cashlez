@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Bank;
 use App\Models\InternalMerchant;
+use App\Models\InternalTransaction;
 use App\Models\UploadBank;
 use App\Models\UploadBankDetail;
 use Illuminate\Http\Request;
@@ -118,48 +119,41 @@ class SettlementController extends Controller
         }
     }
 
-    // Normal CSV Format
-    // public function store(Request $request)
-    // {
-    //     // Periksa apakah file CSV dikirimkan dalam permintaan
-    //     if ($request->hasFile('file')) {
-    //         // Ambil file CSV dari permintaan
-    //         $file = $request->file('file');
+    public function boSettlement(Request $request) 
+    {
+        $query = InternalTransaction::with('header', 'merchant')->where('transaction_type', 'CREDIT');
+        if ($request->filled('bank')) {
+            $query->whereHas('header', function ($query) use ($request) {
+                $query->where(DB::raw('LOWER(processor)'), strtolower($request->bank));
+            });
+        }
+        if ($request->filled('startDate') && $request->filled('endDate')) {
+            $startDate = $request->startDate;
+            $endDate = $request->endDate;
+            
+            $query->where(DB::raw('DATE(settlement_date)'), '>=', $startDate);
+            $query->where(DB::raw('DATE(settlement_date)'), '<=', $endDate);
+        }
+        $query->orderByDesc('settlement_date');
+        return DataTables::of($query->get())->addIndexColumn()->make(true);
+    }
 
-    //         // Baca konten file CSV
-    //         $reader = Reader::createFromPath($file->getPathname(), 'r');
-    //         $reader->setHeaderOffset(0); // Header offset
-
-    //         // Inisialisasi array untuk menyimpan data hasil pemetaan
-    //         $mappedData = [];
-
-    //         // Loop melalui baris-baris CSV
-    //         foreach ($reader as $row) {
-    //             dd($row);
-    //             // Lakukan pemetaan bidang di sini sesuai dengan header CSV Anda
-    //             // Contoh: memetakan bidang "nama" dan "email"
-    //             $mappedRow = [
-    //                 'nama' => $row['nama'],
-    //                 'email' => $row['email']
-    //                 // Tambahkan bidang lain sesuai kebutuhan
-    //             ];
-
-    //             // Tambahkan data hasil pemetaan ke dalam array
-    //             $mappedData[] = $mappedRow;
-    //         }
-
-    //         // Sekarang $mappedData berisi data CSV dengan setiap bidang dipetakan sesuai dengan header
-
-    //         // Lakukan apa pun yang Anda butuhkan dengan data yang dipetakan, seperti menyimpannya ke database
-    //         // Contoh:
-    //         // foreach ($mappedData as $data) {
-    //         //     User::create($data);
-    //         // }
-
-    //         return response()->json(['success' => true, 'data' => $mappedData]);
-    //     } else {
-    //         // Tangani kasus di mana file tidak dikirimkan
-    //         return response()->json(['error' => 'No file uploaded'], 400);
-    //     }
-    // }
+    public function bankSettlement(Request $request) 
+    {
+        $query = UploadBankDetail::with('header')->where('type_code', '001')->where('amount_credit', '>', 0);
+        if ($request->filled('bank')) {
+            $query->whereHas('header', function ($query) use ($request) {
+                $query->where('processor', $request->bank);
+            });
+        }
+        if ($request->filled('startDate') && $request->filled('endDate')) {
+            $startDate = date('d/m/Y', strtotime($request->startDate));
+            $endDate = date('d/m/Y', strtotime($request->endDate));
+        
+            $query->where('transfer_date', '>=', $startDate);
+            $query->where('transfer_date', '<=', $endDate);
+        }
+        $query->orderByDesc('id');
+        return DataTables::of($query->get())->addIndexColumn()->make(true);
+    }
 }

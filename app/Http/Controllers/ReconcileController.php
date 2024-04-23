@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\ReconcileExport;
+use App\Models\Bank;
 use App\Models\InternalBatch;
 use App\Models\InternalMerchant;
 use App\Models\InternalTransaction;
@@ -18,6 +19,35 @@ use Yajra\DataTables\Facades\DataTables;
 
 class ReconcileController extends Controller
 {
+    public function index(){
+        $banks = Bank::where('status', 'active')->get();
+
+        return view('modules.reconcile.index', compact('banks'));
+    }
+
+    public function allData(Request $request){
+        $query = ReconcileResult::with('merchant', 'bank_account');
+        if ($request->input('status') !== null) {
+            switch ($request->input('status')) {
+                case 'match':
+                    $status = ['MATCH'];
+                    break;
+                case 'dispute':
+                    $status = ['NOT_MATCH', 'NOT_FOUND'];
+                    break;
+                case 'onHold':
+                    $status = ['NOT_FOUND'];
+                    break;
+                default:
+                    $status = ['NOT_FOUND'];
+                    break;
+            }
+            $query->whereIn('status', $status);
+        }
+        
+        return DataTables::of($query->get())->addIndexColumn()->make(true);
+    }
+
     public function proceed($token_applicant)
     {
         $user = Auth::user();
@@ -132,7 +162,7 @@ class ReconcileController extends Controller
         $sumDispute = ReconcileResult::where('token_applicant', $token_applicant)->whereIn('status', ['NOT_MATCH', 'NOT_FOUND'])->sum('total_sales');
         $sumHold = ReconcileResult::where('token_applicant', $token_applicant)->where('status', 'NOT_FOUND')->sum('total_sales');
         
-        return view('modules.reconcile.index', compact('match', 'dispute', 'onHold', 'token_applicant', 'sumMatch', 'sumDispute', 'sumHold'));
+        return view('modules.reconcile.show', compact('match', 'dispute', 'onHold', 'token_applicant', 'sumMatch', 'sumDispute', 'sumHold'));
     }
 
     public function data(Request $request, $token_applicant){

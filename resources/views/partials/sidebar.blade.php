@@ -89,13 +89,32 @@
                         <span class="menu-title">Upload Bank Settlement</span>
                     </a>
                 </div>
-                <div class="menu-item">
-                    <a class="menu-link {{ Str::startsWith(request()->path(), 'reconcile') ? 'active' : '' }}" href="/banks">
+                <div data-kt-menu-trigger="click" class="menu-item {{ Str::startsWith(request()->path(), 'reconcile') ? 'here show' : '' }} menu-accordion">
+                    <span class="menu-link">
                         <span class="menu-icon">
-                            <i class="bi bi-shield-check fs-3"></i>
+                            <i class="bi bi-patch-check fs-3"></i>
                         </span>
                         <span class="menu-title">Reconciliation</span>
-                    </a>
+                        <span class="menu-arrow"></span>
+                    </span>
+                    <div class="menu-sub menu-sub-accordion">
+                        <div class="menu-item">
+                            <a class="menu-link {{ Str::startsWith(request()->path(), 'reconcile') ? 'active' : '' }}" href="/reconcile">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">Reconcile</span>
+                            </a>
+                        </div>
+                        <div class="menu-item">
+                            <a class="menu-link {{ Str::startsWith(request()->path(), 'reconcile/result') ? 'active' : '' }}" href="/reconcile">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">Result</span>
+                            </a>
+                        </div>
+                    </div>
                 </div>
                 <div class="menu-item">
                     <a class="menu-link" href="/banks">

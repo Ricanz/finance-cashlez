@@ -1,139 +1,230 @@
 @php
-switch (request()->query('status')) {
-    case 'match':
-        $status = 'MATCH';
-        break;
-    case 'dispute':
-        $status = 'DISPUTE';
-        break;
-    case 'onHold':
-        $status = 'ON HOLD';
-        break;
-    default:
-        $status = 'DISPUTE';
-        break;
-}
+    switch (request()->query('status')) {
+        case 'match':
+            $status = 'MATCH';
+            break;
+        case 'dispute':
+            $status = 'DISPUTE';
+            break;
+        case 'onHold':
+            $status = 'ON HOLD';
+            break;
+        default:
+            $status = 'DISPUTE';
+            break;
+    }
 @endphp
 <x-app-layout>
-    <div class="container">
-        <div class="card card-flush px-10 py-6 rounded-sm">
+    <div id="kt_content_container" class="container-xxl">
+        <!--begin::Header-->
+        <div class="card-header border-0 py-5 rounded-sm mb-5">
+            <h3 class="card-title fw-bolder">Selected items</h3>
+            <div class="row gy-3 g-xl-8">
+                <div class="col-xl-6">
+                    <table id="bo_selected_items" class="table align-middle table-row-dashed fs-6 gy-5">
+                        <thead>
+                            <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
+                                <th>Settlement Date</th>
+                                <th>Batch</th>
+                                <th>Bank</th>
+                                <th>MID</th>
+                                <th class="text-end">BO Settlement</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-gray-600 fw-bold">
+                        </tbody>
+                        <tfoot class="text-black fw-bolder">
+                        </tfoot>
+                    </table>
+                </div>
+                <div class="col-xl-6">
+                    <table id="bank_selected_items" class="table align-middle table-row-dashed fs-6 gy-5">
+                        <thead>
+                            <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
+                                <th>Settlement Date</th>
+                                <th>Bank</th>
+                                <th>MID</th>
+                                <th class="text-end">Bank Settlement</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-gray-600 fw-bold">
+                        </tbody>
+                        <tfoot class="text-black fw-bolder">
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!--end::Header-->
 
-            <div class="d-flex flex-wrap justify-content-between">
-                <!--begin::Stats-->
-                <div class="d-flex flex-wrap">
-                    <div class="border border-gray-300 border-dashed rounded  w-300px py-3 px-4 me-6 mb-3">
-                        <a href={{ url('/reconcile/'.$token_applicant.'/show?status=match') }} class="card-body p-0 d-flex justify-content-between flex-column overflow-hidden">
-                            <!--begin::Hidden-->
-                            <div class="d-flex flex-stack flex-wrap flex-grow-1 px-2 pt-2 pb-3">
-                                <div class="me-2">
-                                    <span class="fw-bolder text-gray-800 d-block fs-3">Match</span>
-                                    <span class="text-gray-400 fw-bold">{{ $match }} Trx</span>
-                                </div>
-                                <div class="fw-bolder fs-5 text-primary">IDR Rp. {{ number_format($sumMatch) }}</div>
-                            </div>
-                            <!--end::Hidden-->
-                        </a>
+        <div class="card-header border-0 py-5 rounded-sm mb-5">
+            <h3 class="card-title fw-bolder">Advance Search</h3>
+            <div class="row gy-3 g-xl-8">
+                <div class="col-xl-6">
+                    <h5 class="fw-bold text-gray-600">BO Settlement</h5>
+                    <div class="d-flex mb-2">
+                        <div class="mb-0 w-50 me-1">
+                            <input class="form-control form-control-solid" placeholder="Pick date rage"
+                                id="kt_daterangepicker_2" />
+                        </div>
+                        <div class="mb-0 w-50 ms-1">
+                            <select name="bank" id="bankSettlementBoSearch" aria-label="Select a Bank"
+                                data-placeholder="Select a Bank..." class="form-select form-select-solid fw-bolder">
+                                <option value="">Select a Bank...</option>
+                                @foreach ($banks as $item)
+                                    <option value="{{ $item->name }}">{{ $item->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
-                    <div class="border border-gray-300 border-dashed rounded  w-300px py-3 px-4 me-6 mb-3">
-                        <a href={{ url('/reconcile/'.$token_applicant.'/show?status=dispute') }} class="card-body p-0 d-flex justify-content-between flex-column overflow-hidden">
-                            <!--begin::Hidden-->
-                            <div class="d-flex flex-stack flex-wrap flex-grow-1 px-2 pt-2 pb-3">
-                                <div class="me-2">
-                                    <span class="fw-bolder text-gray-800 d-block fs-3">Dispute</span>
-                                    <span class="text-gray-400 fw-bold">{{ $dispute }} Trx</span>
-                                </div>
-                                <div class="fw-bolder fs-5 text-primary">IDR Rp. {{ number_format($sumDispute) }}</div>
+                    <div class="d-flex mb-2 align-items-center">
+                        <div class="mb-0 w-75 me-1">
+                            <div class="d-flex align-items-center position-relative w-100">
+                                <!--begin::Svg Icon | path: icons/duotune/general/gen021.svg-->
+                                <span class="svg-icon svg-icon-1 position-absolute ms-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none">
+                                        <rect opacity="0.5" x="17.0365" y="15.1223" width="8.15546" height="2"
+                                            rx="1" transform="rotate(45 17.0365 15.1223)" fill="black" />
+                                        <path
+                                            d="M11 19C6.55556 19 3 15.4444 3 11C3 6.55556 6.55556 3 11 3C15.4444 3 19 6.55556 19 11C19 15.4444 15.4444 19 11 19ZM11 5C7.53333 5 5 7.53333 5 11C5 14.4667 7.53333 17 11 17C14.4667 17 17 14.4667 17 11C17 7.53333 14.4667 5 11 5Z"
+                                            fill="black" />
+                                    </svg>
+                                </span>
+                                <!--end::Svg Icon-->
+                                <input type="text" data-kt-docs-table-filter="searchBo"
+                                    class="form-control form-control-solid ps-14" placeholder="Search Table" />
                             </div>
-                            <!--end::Hidden-->
-                        </a>
+                        </div>
+                        <div class="mb-0 w-25 ms-1">
+                            <button id="clearBoSearch" class="btn btn-sm btn-light-warning w-100">Clear Search</button>
+                        </div>
                     </div>
-                    <div class="border border-gray-300 border-dashed rounded  w-300px py-3 px-4 me-6 mb-3">
-                        <a href={{ url('/reconcile/'.$token_applicant.'/show?status=onHold') }} class="card-body p-0 d-flex justify-content-between flex-column overflow-hidden">
-                            <!--begin::Hidden-->
-                            <div class="d-flex flex-stack flex-wrap flex-grow-1 px-2 pt-2 pb-3">
-                                <div class="me-2">
-                                    <span class="fw-bolder text-gray-800 d-block fs-3">On Hold</span>
-                                    <span class="text-gray-400 fw-bold">{{ $onHold }} Trx</span>
-                                </div>
-                                <div class="fw-bolder fs-5 text-primary">IDR Rp. {{ number_format($sumHold) }}</div>
+                </div>
+                <div class="col-xl-6">
+                    <h5 class="fw-bold text-gray-600">BANK Settlement</h5>
+                    <div class="d-flex mb-2">
+                        <div class="mb-0 w-50 me-1">
+                            <input class="form-control form-control-solid" placeholder="Pick date rage"
+                                id="kt_daterangepicker_1" />
+                        </div>
+                        <div class="mb-0 w-50 ms-1">
+                            <select name="bank" id="bankSettlementSearch" aria-label="Select a Bank"
+                                data-placeholder="Select a Bank..." class="form-select form-select-solid fw-bolder">
+                                <option value="">Select a Bank...</option>
+                                @foreach ($banks as $item)
+                                    <option value="{{ $item->name }}">{{ $item->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="d-flex mb-2 align-items-center">
+                        <div class="mb-0 w-75 me-1">
+                            <div class="d-flex align-items-center position-relative w-100">
+                                <!--begin::Svg Icon | path: icons/duotune/general/gen021.svg-->
+                                <span class="svg-icon svg-icon-1 position-absolute ms-4">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                        viewBox="0 0 24 24" fill="none">
+                                        <rect opacity="0.5" x="17.0365" y="15.1223" width="8.15546" height="2"
+                                            rx="1" transform="rotate(45 17.0365 15.1223)" fill="black" />
+                                        <path
+                                            d="M11 19C6.55556 19 3 15.4444 3 11C3 6.55556 6.55556 3 11 3C15.4444 3 19 6.55556 19 11C19 15.4444 15.4444 19 11 19ZM11 5C7.53333 5 5 7.53333 5 11C5 14.4667 7.53333 17 11 17C14.4667 17 17 14.4667 17 11C17 7.53333 14.4667 5 11 5Z"
+                                            fill="black" />
+                                    </svg>
+                                </span>
+                                <!--end::Svg Icon-->
+                                <input type="text" data-kt-docs-table-filter="searchBank"
+                                    class="form-control form-control-solid ps-14" placeholder="Search Table" />
                             </div>
-                            <!--end::Hidden-->
-                        </a>
+                        </div>
+                        <div class="mb-0 w-25 ms-1">
+                            <button id="clearBankSearch" class="btn btn-sm btn-light-warning w-100">Clear Search</button>
+                        </div>
                     </div>
                 </div>
             </div>
-            <!--begin::Wrapper-->
-            <div class="d-flex flex-stack mb-5">
-                <!--begin::Search-->
-                <div class="card-title">
-                    @if (request()->query('status') !== null)
-                        <div class="fw-bolder fs-3 my-4">Result For {{ $status }} Transaction</div>
-                    @endif
+        </div>
 
-                    <!--begin::Search-->
-                    <div class="d-flex align-items-center position-relative my-1">
-                        <!--begin::Svg Icon | path: icons/duotune/general/gen021.svg-->
-                        <span class="svg-icon svg-icon-1 position-absolute ms-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                fill="none">
-                                <rect opacity="0.5" x="17.0365" y="15.1223" width="8.15546" height="2"
-                                    rx="1" transform="rotate(45 17.0365 15.1223)" fill="black" />
-                                <path
-                                    d="M11 19C6.55556 19 3 15.4444 3 11C3 6.55556 6.55556 3 11 3C15.4444 3 19 6.55556 19 11C19 15.4444 15.4444 19 11 19ZM11 5C7.53333 5 5 7.53333 5 11C5 14.4667 7.53333 17 11 17C14.4667 17 17 14.4667 17 11C17 7.53333 14.4667 5 11 5Z"
-                                    fill="black" />
-                            </svg>
-                        </span>
-                        <!--end::Svg Icon-->
-                        <input type="text" data-kt-docs-table-filter="search"
-                            class="form-control form-control-solid w-250px ps-14 rounded-sm"
-                            placeholder="Search Merchant" />
+        <div class="row gy-3 g-xl-8">
+            <!--begin::Col-->
+            <div class="col-xl-6">
+                <!--begin::Mixed Widget 2-->
+                <div class="card card-xl-stretch">
+                    <!--begin::Header-->
+                    <div class="card-header border-0 bg-danger py-5">
+                        <h3 class="card-title fw-bolder text-white">BO Settlement</h3>
                     </div>
-                    <!--end::Search-->
-                </div>
-                <!--end::Search-->
+                    <!--end::Header-->
+                    <!--begin::Body-->
+                    <div class="card-body p-0">
 
-                <!--begin::Toolbar-->
-                <div class="d-flex justify-content-end" data-kt-docs-table-toolbar="base">
-                    <!--begin::Filter-->
-                    <a href="{{ url('/reconcile/'.$token_applicant.'/download') }} " class="btn btn-light-warning me-3 rounded-sm">Download</a>
-                    <!--end::Filter-->
-                </div>
-                <!--end::Toolbar-->
+                        <div class="card card-flush px-10 py-6 rounded-sm">
+                            <!--begin::Datatable-->
 
+                            <table id="bo_settlement_table" class="table align-middle table-row-dashed fs-6 gy-5">
+                                <thead>
+                                    <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
+                                        <th>Settlement Date</th>
+                                        <th>Batch</th>
+                                        <th>Merchant Name</th>
+                                        <th>Bank Type</th>
+                                        <th>MID</th>
+                                        <th>Bank Payment</th>
+                                        <th>Check</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-gray-600 fw-bold">
+                                </tbody>
+                            </table>
+                            <!--end::Datatable-->
+                        </div>
+                    </div>
+                    <!--end::Body-->
+                </div>
+                <!--end::Mixed Widget 2-->
             </div>
-            <!--end::Wrapper-->
+            <!--end::Col-->
+            <!--begin::Col-->
+            <div class="col-xl-6">
+                <!--begin::Mixed Widget 2-->
+                <div class="card card-xl-stretch">
+                    <!--begin::Header-->
+                    <div class="card-header border-0 bg-danger py-5">
+                        <h3 class="card-title fw-bolder text-white">BANK Settlement</h3>
+                    </div>
+                    <!--end::Header-->
+                    <!--begin::Body-->
+                    <div class="card-body p-0">
 
-            <!--begin::Datatable-->
-            
-            <table id="kt_datatable_example_1" class="table align-middle table-row-dashed fs-6 gy-5">
-                <thead>
-                    <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                        <th>No</th>
-                        <th>Settlement Date</th>
-                        <th>Batch</th>
-                        <th>Bank Type</th>
-                        <th>MID</th>
-                        <th>MRC</th>
-                        <th>Merchant Name</th>
-                        <th>BO Settlement</th>
-                        <th>Bank Settlement</th>
-                        <th>Dispute Amount</th>
-                        <th>Net Transfer</th>
-                        <th>Account Number</th>
-                        <th>Bank Code</th>
-                        <th>Bank Name</th>
-                        <th>Account Holder</th>
-                    </tr>
-                </thead>
-                <tbody class="text-gray-600 fw-bold">
-                </tbody>
-            </table>
-            <!--end::Datatable-->
+                        <div class="card card-flush px-10 py-6 rounded-sm">
+                            <!--begin::Datatable-->
+                            <table id="bank_settlement_table" class="table align-middle table-row-dashed fs-6 gy-5">
+                                <thead>
+                                    <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
+                                        <th>Settlement Date</th>
+                                        <th>Merchant Name</th>
+                                        <th>Bank Type</th>
+                                        <th>MID</th>
+                                        <th>Bank Settlement</th>
+                                        <th>Check</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-gray-600 fw-bold">
+                                </tbody>
+                            </table>
+                            <!--end::Datatable-->
+                        </div>
+                    </div>
+                    <!--end::Body-->
+                </div>
+                <!--end::Mixed Widget 2-->
+            </div>
+            <!--end::Col-->
         </div>
     </div>
     @include('/modules/reconcile/mrc-modal')
 
     @section('scripts')
-        <script src="{{ asset('cztemp/assets/custom/js/reconcile.js') }}"></script>
+        <script src="{{ asset('cztemp/assets/custom/js/reconcile_manual.js') }}"></script>
     @endsection
 </x-app-layout>
