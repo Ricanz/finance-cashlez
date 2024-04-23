@@ -53,6 +53,11 @@
                         </tfoot>
                     </table>
                 </div>
+
+                <div class="d-flex justify-content-end mb-0 w-25 ms-1">
+                    <button id="refreshButton" class="btn btn-sm btn-light-warning w-100 me-1">Clear Table</button>
+                    <button id="singleReconcile" class="btn btn-sm btn-light-primary w-100 ms-2">Reconcile</button>
+                </div>
             </div>
         </div>
         <!--end::Header-->

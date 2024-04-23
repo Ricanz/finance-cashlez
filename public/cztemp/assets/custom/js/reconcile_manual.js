@@ -335,7 +335,18 @@ var KTDatatablesServerSideBO = (function () {
 })();
 
 $("#refreshButton").on("click", function () {
-    KTDatatablesServerSide.reload();
+    var tbodyBank = document.querySelector("#bank_selected_items tbody");
+    var tfootBank = document.querySelector("#bank_selected_items tfoot");
+    var tbodyBo = document.querySelector("#bo_selected_items tbody");
+    var tfootBo = document.querySelector("#bo_selected_items tfoot");
+
+    tbodyBank.innerHTML = "";
+    tfootBank.innerHTML = "";
+    tbodyBo.innerHTML = "";
+    tfootBo.innerHTML = "";
+
+    $('input[type="checkbox"]').prop('checked', false);
+
 });
 
 var totalBankSettlement = 0;
