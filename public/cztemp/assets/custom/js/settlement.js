@@ -100,7 +100,6 @@ var KTDatatablesServerSide = (function () {
                     className: "text-center",
                     width: "200px",
                     render: function (data, type, row) {
-                        console.log(row);
                         if (row.is_reconcile == "0" || !row.is_reconcile) {
                             return `
                                 <a href="javascript:void(0)" id="reconcile_${data}" onclick="reconcile('${data}')" class="btn btn-primary btn-active-light-primary btn-sm rounded-sm">

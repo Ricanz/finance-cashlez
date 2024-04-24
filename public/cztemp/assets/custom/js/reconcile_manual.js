@@ -45,7 +45,7 @@ var KTDatatablesServerSide = (function () {
                     width: "150px",
                     render: function (data, type, row, meta) {
                         // return meta.row + 1;
-                        if (row.is_reconcile) {
+                        if (row.is_reconcile == "1" || row.is_reconcile) {
                             return `
                                 <div class="form-check form-check-sm form-check-custom form-check-solid text-end" data-bs-toggle="tooltip" data-bs-placement="top" title="Tooltip on top">
                                     <input
