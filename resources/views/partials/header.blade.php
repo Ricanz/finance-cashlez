@@ -25,9 +25,9 @@
                     <!--begin::Menu-->
                     <div class="menu menu-lg-rounded menu-column menu-lg-row menu-state-bg menu-title-gray-700 menu-state-title-primary menu-state-icon-primary menu-state-bullet-primary menu-arrow-gray-400 fw-bold my-5 my-lg-0 align-items-stretch" id="#kt_header_menu" data-kt-menu="true">
                         <h1 class="d-flex align-items-center text-white fw-bolder fs-3 my-1">
-                            User
-                            <span class="h-20px border-muted border-start ms-3 mx-2"></span>
-                            <small class="text-muted fs-6 fw-bold my-1 ms-1">Management of User</small>
+                            Reconciliation System
+                            {{-- <span class="h-20px border-muted border-start ms-3 mx-2"></span>
+                            <small class="text-muted fs-6 fw-bold my-1 ms-1">Management of User</small> --}}
                         </h1>
                     </div>
                     <!--end::Menu-->
@@ -70,20 +70,27 @@
                             <!--end::Menu separator-->
                             <!--begin::Menu item-->
                             <div class="menu-item px-5">
-                                <a href="../../demo13/dist/account/overview.html" class="menu-link px-5">My Profile</a>
+                                <a href="users/profile" class="menu-link px-5">My Profile</a>
                             </div>
                             <!--end::Menu item-->
                             <!--begin::Menu item-->
                             <div class="menu-item px-5">
-                                <a href="../../demo13/dist/apps/projects/list.html" class="menu-link px-5">
-                                    <span class="menu-text">Change Password</span>
+                                <a href="users/change-password">
+                                    <span class="menu-link">Change Password</span>
                                 </a>
                             </div>
                             <!--end::Menu item-->
                             <div class="separator my-2"></div>
                             <!--begin::Menu item-->
                             <div class="menu-item px-5">
-                                <a href="../../demo13/dist/authentication/flows/basic/sign-in.html" class="menu-link px-5">Sign Out</a>
+                                <form method="POST" action="{{ route('logout') }}">
+                                    @csrf
+
+                                    <button type="submit" class="menu-link px-5 text-dark"
+                                        style="background: none; border: none; cursor: pointer;">
+                                        {{ __('Sign Out') }}
+                                    </button>
+                                </form>
                             </div>
                             <!--end::Menu item-->
                             <!--begin::Menu separator-->
