@@ -45,17 +45,8 @@ var KTDatatablesServerSide = (function () {
                     width: "150px",
                     render: function (data, type, row, meta) {
                         // return meta.row + 1;
-                        console.log(row);
-                        if (row.is_reconcile == "1" || row.is_reconcile) {
-                            return `
-                                <div class="form-check form-check-sm form-check-custom form-check-solid text-end" data-bs-toggle="tooltip" data-bs-placement="top" title="Tooltip on top">
-                                    <input
-                                    class="form-check-input boCheckbox" name="bo_check[]" type="checkbox" 
-                                    value="1" data-kt-check="true" data-kt-check-target=".widget-9-check" 
-                                    disabled/>
-                                </div>
-                            `;
-                        }
+                        console.log(row.is_reconcile);
+                        if (row.is_reconcile == "0" || !row.is_reconcile) {
                             return `
                                 <div class="form-check form-check-sm form-check-custom form-check-solid text-end" data-bs-toggle="tooltip" data-bs-placement="top" title="Tooltip on top">
                                     <input onclick="checkBank(
@@ -68,6 +59,16 @@ var KTDatatablesServerSide = (function () {
                                     value="1" data-kt-check="true" data-kt-check-target=".widget-9-check" />
                                 </div>
                             `;
+                        } else{
+                            return `
+                                <div class="form-check form-check-sm form-check-custom form-check-solid text-end" data-bs-toggle="tooltip" data-bs-placement="top" title="Tooltip on top">
+                                    <input
+                                    class="form-check-input boCheckbox" name="bo_check[]" type="checkbox" 
+                                    value="1" data-kt-check="true" data-kt-check-target=".widget-9-check" 
+                                    disabled/>
+                                </div>
+                            `;
+                        }
                     },
                 },
                 {
