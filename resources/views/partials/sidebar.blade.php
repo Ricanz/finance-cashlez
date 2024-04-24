@@ -99,7 +99,7 @@
                     </span>
                     <div class="menu-sub menu-sub-accordion">
                         <div class="menu-item">
-                            <a class="menu-link {{ Str::startsWith(request()->path(), 'reconcile') ? 'active' : '' }}" href="/reconcile">
+                            <a class="menu-link {{ request()->is('reconcile') ? 'active' : '' }}" href="/reconcile">
                                 <span class="menu-bullet">
                                     <span class="bullet bullet-dot"></span>
                                 </span>
@@ -107,7 +107,7 @@
                             </a>
                         </div>
                         <div class="menu-item">
-                            <a class="menu-link {{ Str::startsWith(request()->path(), 'reconcile/result') ? 'active' : '' }}" href="/reconcile">
+                            <a class="menu-link {{ request()->is('reconcile/result') ? 'active' : '' }}" href="/reconcile/result">
                                 <span class="menu-bullet">
                                     <span class="bullet bullet-dot"></span>
                                 </span>
@@ -117,7 +117,7 @@
                     </div>
                 </div>
                 <div class="menu-item">
-                    <a class="menu-link" href="/banks">
+                    <a class="menu-link" href="/disbursement">
                         <span class="menu-icon">
                             <i class="bi bi-sticky fs-3"></i>
                         </span>

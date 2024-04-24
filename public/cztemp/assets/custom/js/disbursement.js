@@ -39,7 +39,7 @@ var KTDatatablesServerSide = (function () {
             columns: [
                 { data: "id" },
                 { data: "settlement_date" },
-                // { data: "batch_fk" },
+                { data: "batch_fk" },
                 { data: "processor_payment" },
                 { data: "mid" },
                 { data: "merchant.name" },
@@ -74,7 +74,7 @@ var KTDatatablesServerSide = (function () {
                     },
                 },
                 {
-                    targets: 3,
+                    targets: 4,
                     orderable: true,
                     className: "text-center",
                     width: "50px",
@@ -90,7 +90,7 @@ var KTDatatablesServerSide = (function () {
                     },
                 },
                 {
-                    targets: 4,
+                    targets: 5,
                     orderable: true,
                     className: "text-center",
                     width: "30px",
@@ -99,7 +99,7 @@ var KTDatatablesServerSide = (function () {
                     },
                 },
                 {
-                    targets: 5,
+                    targets: 6,
                     orderable: true,
                     className: "text-center",
                     width: "50px",
@@ -121,15 +121,6 @@ var KTDatatablesServerSide = (function () {
                     }
                 },
                 {
-                    targets: 6,
-                    orderable: true,
-                    className: "text-start",
-                    width: "150px",
-                    render: function (data, type, row) {
-                        return to_rupiah(data);
-                    },
-                },
-                {
                     targets: 7,
                     orderable: true,
                     className: "text-start",
@@ -149,6 +140,15 @@ var KTDatatablesServerSide = (function () {
                 },
                 {
                     targets: 9,
+                    orderable: true,
+                    className: "text-start",
+                    width: "150px",
+                    render: function (data, type, row) {
+                        return to_rupiah(data);
+                    },
+                },
+                {
+                    targets: 10,
                     orderable: true,
                     className: "text-start",
                     width: "150px",

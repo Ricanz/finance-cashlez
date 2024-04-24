@@ -109,10 +109,10 @@ var KTDatatablesServerSide = (function () {
                         }
                         return `
                             <div class="d-flex">
-                                <a href="/reconcile/${data}/show" class="btn btn-success btn-active-light-success btn-sm rounded-sm">
+                                <a href="/reconcile/result?token=${data}" class="btn btn-success btn-active-light-success btn-sm rounded-sm">
                                     View
                                 </a>
-                                <a href="/reconcile/${data}/download" class="btn btn-light-warning btn-sm rounded-sm mx-2">
+                                <a href="/reconcile/download?token=${data}" class="btn btn-light-warning btn-sm rounded-sm mx-2">
                                     Download
                                 </a>
                             </div>
@@ -163,6 +163,7 @@ function reconcile(token) {
             cancelButton: "btn fw-bold btn-active-light-primary rounded-sm",
         },
     }).then(function (result) {
+        swal.showLoading();
         if (result.value) {
             $.ajax({
                 url: "/reconcile/" + token + '/proceed',

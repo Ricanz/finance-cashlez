@@ -25,7 +25,7 @@
                         <thead>
                             <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
                                 <th>Settlement Date</th>
-                                <th>Batch</th>
+                                {{-- <th>Batch</th> --}}
                                 <th>Bank</th>
                                 <th>MID</th>
                                 <th class="text-end">BO Settlement</th>
@@ -56,7 +56,10 @@
 
                 <div class="d-flex justify-content-end mb-0 w-25 ms-1">
                     <button id="refreshButton" class="btn btn-sm btn-light-warning w-100 me-1">Clear Table</button>
-                    <button id="singleReconcile" class="btn btn-sm btn-light-primary w-100 ms-2">Reconcile</button>
+                    <form action="#" id="singleReconcile">
+                        @csrf
+                        <button type="submit" id="kt_modal_new_target_submit" class="btn btn-sm btn-light-primary w-100 ms-2">Reconcile</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -170,7 +173,7 @@
                                 <thead>
                                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
                                         <th>Settlement Date</th>
-                                        <th>Batch</th>
+                                        {{-- <th>Batch</th> --}}
                                         <th>Merchant Name</th>
                                         <th>Bank Type</th>
                                         <th>MID</th>

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BankController;
+use App\Http\Controllers\DisbursementController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SettlementController;
@@ -60,14 +61,19 @@ Route::middleware('auth')->group(function () {
 
     // Reconcile
     Route::get('/reconcile', [ReconcileController::class, 'index'])->name('reconcile.index');
-    Route::get('/reconcile/data', [ReconcileController::class, 'allData'])->name('reconcile.allData');
+    Route::get('/reconcile/result', [ReconcileController::class, 'result'])->name('reconcile.result');
     Route::get('/reconcile/{token}/proceed', [ReconcileController::class, 'proceed'])->name('reconcile.proceed');
     Route::get('/reconcile/{token}/show', [ReconcileController::class, 'show'])->name('reconcile.show');
-    Route::get('/reconcile/{token}/data', [ReconcileController::class, 'data'])->name('reconcile.data');
-    Route::get('/reconcile/{token}/download', [ReconcileController::class, 'download'])->name('reconcile.download');
+    Route::get('/reconcile/data', [ReconcileController::class, 'data'])->name('reconcile.data');
+    Route::get('/reconcile/download', [ReconcileController::class, 'download'])->name('reconcile.download');
+    Route::post('/reconcile/single', [ReconcileController::class, 'reconcile'])->name('reconcile.single');
 
     // Modal Show
     Route::get('/mrc/{token}/detail', [ReconcileController::class, 'mrcDetail'])->name('reconcile.mrcDetail');
+
+    // Disbursement
+    Route::get('/disbursement', [DisbursementController::class, 'index'])->name('disbursment.index');
+
     
 });
 

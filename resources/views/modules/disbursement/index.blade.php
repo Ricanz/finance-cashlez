@@ -128,7 +128,7 @@
                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
                         <th>No</th>
                         <th>Settlement Date</th>
-                        {{-- <th>Batch</th> --}}
+                        <th>Batch</th>
                         <th>Bank Type</th>
                         <th>MID / MRC</th>
                         <th>Merchant Name</th>
@@ -152,6 +152,6 @@
     @include('/modules/reconcile/mrc-modal')
 
     @section('scripts')
-        <script src="{{ asset('cztemp/assets/custom/js/reconcile.js') }}"></script>
+        <script src="{{ asset('cztemp/assets/custom/js/disbursement.js') }}"></script>
     @endsection
 </x-app-layout>

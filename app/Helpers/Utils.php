@@ -54,4 +54,26 @@ class Utils
         return csrf_token();
     }
 
+    public static function calculateMerchantPayment($bankTransfer, $feeMdrMerchant, $feeBankMerchant, $taxPayment)
+    {
+        $calculate = $bankTransfer - (($feeMdrMerchant - $feeBankMerchant) + $taxPayment);
+        return $calculate;
+    }
+
+    public static function calculateTreshold($trxCount)
+    {
+        return (2 + 1) * $trxCount;
+    }
+
+    public static function getStatusReconcile($treshold, $boSettlement, $bankSettlement)
+    {
+        if (($bankSettlement - $boSettlement) < $treshold &&
+                ($bankSettlement - $boSettlement) > (0 - $treshold)
+           ) {
+            return "MATCH";
+        } else {
+            return "NOT_MATCH";
+        }
+    }
+
 }

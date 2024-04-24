@@ -9,24 +9,43 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 
 class ReconcileExport implements FromCollection, WithHeadings, WithMapping
 {
-    protected $token_applicant;
+    protected $token_applicant, $status;
 
-    public function __construct($token_applicant)
+    public function __construct($token_applicant, $status)
     {
         $this->token_applicant = $token_applicant;
+        $this->status = $status;
     }
 
     /**
-    * @return \Illuminate\Support\Collection
-    */
+     * @return \Illuminate\Support\Collection
+     */
     public function collection()
-    {        
-        $query = ReconcileResult::with('merchant', 'bank_account')->where('token_applicant', $this->token_applicant)->get();
-        return $query;
+    {
+        $query = ReconcileResult::with('merchant', 'bank_account');
+        if ($this->token_applicant) {
+            $query->where('token_applicant', $this->token_applicant);
+        }
+        if ($this->status) {
+            if ($this->status == "match") {
+                $query->where('status', 'MATCH');
+            } elseif ($this->status == "dispute") {
+                $query->whereIn('status', ['NOT_MATCH', 'NOT_FOUND']);
+            }
+        }
+
+        return $query->get(); // Return the result of the query
     }
 
     public function map($data): array
     {
+        if ($data->status == 'MATCH') {
+            $stt = 'MATCH';
+        } elseif($data->status == 'NOT_MATCH' || $data->status == 'NOT_FOUND'){
+            $stt = 'DISPUTE';
+        } else{
+            $stt = 'ONHOLD';
+        }
         return [
             $data->settlement_date,
             $data->batch_fk,
@@ -34,11 +53,14 @@ class ReconcileExport implements FromCollection, WithHeadings, WithMapping
             $data->mid,
             $data->merchant->name,
             $data->processor_payment,
-            '-',
+            $stt,
+            $data->internal_payment,
+            $data->bank_settlement_amount,
+            $data->dispute_amount,
             $data->total_sales,
             $data->merchant_payment,
             $data->transfer_amount,
-            " ".$data->bank_account->account_number,
+            " " . $data->bank_account->account_number,
             $data->bank_account->bank_code,
             $data->bank_account->bank_name,
             $data->bank_account->account_holder,
@@ -56,7 +78,11 @@ class ReconcileExport implements FromCollection, WithHeadings, WithMapping
             'MID',
             'Merchant Name',
             'Bank Type',
-            'Trx Status',
+            // 'Trx Status',
+            'Reconcile Status',
+            'BO Settlement Amount',
+            'BANK Settlement Amount',
+            'Dispute Amount',
             'Total Sales',
             'Bank Statement',
             'Transfer Amount',

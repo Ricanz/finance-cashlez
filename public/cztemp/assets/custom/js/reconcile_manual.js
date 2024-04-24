@@ -41,23 +41,32 @@ var KTDatatablesServerSide = (function () {
                 {
                     targets: -1,
                     orderable: true,
-                    className: "text-start",
+                    className: "text-end",
                     width: "150px",
                     render: function (data, type, row, meta) {
                         // return meta.row + 1;
-                        return `
-                            <div class="form-check form-check-sm form-check-custom form-check-solid">
-                                <input onclick="checkBank(
-                                    ${row.id}, 
-                                    '${to_date(row.transfer_date)}', 
-                                    '${row.header.processor}', 
-                                    '${row.mid}', '${row.amount_credit}'
-                                )" id="checkbox_bank_${row.id}" 
-                                class="form-check-input" name="bo_check[]" type="checkbox" 
-                                value="1" data-kt-check="true" data-kt-check-target=".widget-9-check" 
-                                ${row.is_reconcile ? 'disabled' : ''}/>
-                            </div>
-                        `;
+                        if (row.is_reconcile) {
+                            return `
+                                <div class="form-check form-check-sm form-check-custom form-check-solid text-end" data-bs-toggle="tooltip" data-bs-placement="top" title="Tooltip on top">
+                                    <input
+                                    class="form-check-input boCheckbox" name="bo_check[]" type="checkbox" 
+                                    value="1" data-kt-check="true" data-kt-check-target=".widget-9-check" 
+                                    disabled/>
+                                </div>
+                            `;
+                        }
+                            return `
+                                <div class="form-check form-check-sm form-check-custom form-check-solid text-end" data-bs-toggle="tooltip" data-bs-placement="top" title="Tooltip on top">
+                                    <input onclick="checkBank(
+                                        ${row.id}, 
+                                        '${to_date(row.transfer_date)}', 
+                                        '${row.header.processor}', 
+                                        '${row.mid}', '${row.amount_credit}'
+                                    )" id="checkbox_bank_${row.id}" 
+                                    class="form-check-input boCheckbox" name="bo_check[]" type="checkbox" 
+                                    value="1" data-kt-check="true" data-kt-check-target=".widget-9-check" />
+                                </div>
+                            `;
                     },
                 },
                 {
@@ -172,7 +181,7 @@ var KTDatatablesServerSideBO = (function () {
             searchDelay: 200,
             processing: true,
             serverSide: true,
-            order: [[1, "desc"]],
+            order: [[0, "asc"]],
             stateSave: true,
             autoWidth: true,
             select: {
@@ -189,12 +198,12 @@ var KTDatatablesServerSideBO = (function () {
                 },
             },
             columns: [
-                { data: "settlement_date" },
-                { data: "batch_fk" },
+                { data: "created_at" },
+                // { data: "batch_fk" },
                 { data: "merchant.name" },
-                { data: "header.processor" },
-                { data: "header.mid" },
-                { data: "bank_payment" },
+                { data: "processor" },
+                { data: "mid" },
+                { data: "bank_transfer" },
                 { data: "id" },
             ],
             columnDefs: [
@@ -207,7 +216,7 @@ var KTDatatablesServerSideBO = (function () {
                         // return meta.row + 1;
                         return `
                             <div class="form-check form-check-sm form-check-custom form-check-solid">
-                                <input onclick="checkBo(${row.id}, '${row.settlement_date}', '${row.batch_fk}', '${row.header.processor}', '${row.header.mid}', '${row.bank_payment}')" id="checkbox_bo_${row.id}" class="form-check-input" name="bo_check[]" type="checkbox" value="1" data-kt-check="true" data-kt-check-target=".widget-9-check" />
+                                <input onclick="checkBo(${row.id}, '${row.created_at}', '${row.processor}', '${row.mid}', '${row.bank_transfer}')" id="checkbox_bo_${row.id}" class="form-check-input" name="bo_check[]" type="checkbox" value="1" data-kt-check="true" data-kt-check-target=".widget-9-check" />
                             </div>
                         `;
                     },
@@ -223,7 +232,7 @@ var KTDatatablesServerSideBO = (function () {
                     },
                 },
                 {
-                    targets: 3,
+                    targets: 2,
                     orderable: true,
                     className: "text-center",
                     width: "30px",
@@ -232,9 +241,9 @@ var KTDatatablesServerSideBO = (function () {
                     },
                 },
                 {
-                    targets: 4,
+                    targets: 3,
                     orderable: true,
-                    className: "text-center",
+                    className: "text-center w-100",
                     width: "50px",
                     render: function (data, type, row) {
                         return `
@@ -245,7 +254,7 @@ var KTDatatablesServerSideBO = (function () {
                     },
                 },
                 {
-                    targets: 5,
+                    targets: 4,
                     orderable: true,
                     className: "text-end",
                     width: "200px",
@@ -334,6 +343,12 @@ var KTDatatablesServerSideBO = (function () {
     };
 })();
 
+var totalBankSettlement = 0;
+var selectedBanks = [];
+
+var totalBankPayment = 0;
+var selectedBo = [];
+
 $("#refreshButton").on("click", function () {
     var tbodyBank = document.querySelector("#bank_selected_items tbody");
     var tfootBank = document.querySelector("#bank_selected_items tfoot");
@@ -346,10 +361,63 @@ $("#refreshButton").on("click", function () {
     tfootBo.innerHTML = "";
 
     $('input[type="checkbox"]').prop('checked', false);
-
+    totalBankPayment = 0;
+    totalBankSettlement = 0;
 });
 
-var totalBankSettlement = 0;
+$("#singleReconcile").on("submit", function (event) {
+    event.preventDefault();
+    var token = $('meta[name="csrf-token"]').attr('content');
+    var formData = new FormData(this);
+    formData.append("selectedBo", selectedBo)
+    formData.append("selectedBank", selectedBanks)
+    $.ajax({
+        headers: { 'X-CSRF-TOKEN': token },
+        type : 'POST',
+        data: formData,
+        url  : '/reconcile/single',
+        dataType: 'JSON',
+        cache: false,
+        contentType: false,
+        processData: false,
+        beforeSend: function() {
+            swal.showLoading();
+        },
+        success: function(data){
+            if(data.status === true) {
+                swal.hideLoading();
+                swal.fire({
+                    text: data.message,
+                    icon: "success",
+                    buttonsStyling: false,
+                    confirmButtonText: "Ok, got it!",
+                    customClass: {
+                        confirmButton: "btn font-weight-bold btn-light-primary"
+                    }
+                }).then(function() {
+                    location.href = "/reconcile/result";
+                });
+            }else {
+                var values = '';
+                jQuery.each(data.message, function (key, value) {
+                    values += value+"<br>";
+                });
+
+                swal.fire({
+                    text: data.message,
+                    html: values,
+                    icon: "error",
+                    buttonsStyling: false,
+                    confirmButtonText: "Ok, got it!",
+                    customClass: {
+                        confirmButton: "btn font-weight-bold btn-light-primary"
+                    }
+                }).then(function() { });
+            }
+        }
+    });
+});
+
 function checkBank(id, settlementDate, bankType, mid, bankSettlement) {
     var checkbox = document.getElementById(`checkbox_bank_${id}`);
     var tbody = document.querySelector("#bank_selected_items tbody");
@@ -357,6 +425,8 @@ function checkBank(id, settlementDate, bankType, mid, bankSettlement) {
     if (checkbox.checked) {
         // Clear existing rows
         // tbody.innerHTML = "";
+
+        selectedBanks.push(id);
 
         var row = document.createElement("tr");
         row.setAttribute("id", `bank_detail_${id}`);
@@ -375,6 +445,10 @@ function checkBank(id, settlementDate, bankType, mid, bankSettlement) {
             )}</td>
         `;
     } else {
+        var idx = selectedBanks.indexOf(id);
+        if (idx !== -1) {
+            selectedBanks.splice(idx, 1);
+        }
         totalBankSettlement = totalBankSettlement - parseInt(bankSettlement);
         tfoot.innerHTML = "";
         tfoot.innerHTML = `
@@ -386,9 +460,7 @@ function checkBank(id, settlementDate, bankType, mid, bankSettlement) {
     }
 }
 
-var totalBankPayment = 0;
-function checkBo(id, settlementDate, batch, bankType, mid, bankPayment) {
-    console.log(`check bo ${id}`);
+function checkBo(id, settlementDate, bankType, mid, bankPayment) {
     var checkbox = document.getElementById(`checkbox_bo_${id}`);
     var tbody = document.querySelector("#bo_selected_items tbody");
     var tfoot = document.querySelector("#bo_selected_items tfoot");
@@ -396,11 +468,12 @@ function checkBo(id, settlementDate, batch, bankType, mid, bankPayment) {
         // Clear existing rows
         // tbody.innerHTML = "";
 
+        selectedBo.push(id);
+        
         var row = document.createElement("tr");
         row.setAttribute("id", `bo_detail_${id}`);
         row.innerHTML = `
             <td>${to_date(settlementDate)}</td>
-            <td>${batch}</td>
             <td>${bankType}</td>
             <td>${mid}</td>
             <td class="text-end">${to_rupiah(bankPayment)}</td>
@@ -412,6 +485,10 @@ function checkBo(id, settlementDate, batch, bankType, mid, bankPayment) {
             <td colspan="2" class="text-end">${to_rupiah(totalBankPayment)}</td>
         `;
     } else {
+        var idx = selectedBo.indexOf(id);
+        if (idx !== -1) {
+            selectedBo.splice(idx, 1);
+        }
         totalBankPayment = totalBankPayment - parseInt(bankPayment);
         tfoot.innerHTML = "";
         tfoot.innerHTML = `

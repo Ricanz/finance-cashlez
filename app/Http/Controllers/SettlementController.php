@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Bank;
+use App\Models\InternalBatch;
 use App\Models\InternalMerchant;
 use App\Models\InternalTransaction;
 use App\Models\UploadBank;
@@ -121,20 +122,23 @@ class SettlementController extends Controller
 
     public function boSettlement(Request $request) 
     {
-        $query = InternalTransaction::with('header', 'merchant')->where('transaction_type', 'CREDIT');
+        $query = InternalTransaction::with('header', 'merchant');
+        $query = InternalBatch::with('merchant');
         if ($request->filled('bank')) {
-            $query->whereHas('header', function ($query) use ($request) {
-                $query->where(DB::raw('LOWER(processor)'), strtolower($request->bank));
-            });
+            $query->where(DB::raw('LOWER(processor)'), strtolower($request->bank));
+            // $query->whereHas('header', function ($query) use ($request) {
+            //     $query->where(DB::raw('LOWER(processor)'), strtolower($request->bank));
+            // });
         }
         if ($request->filled('startDate') && $request->filled('endDate')) {
             $startDate = $request->startDate;
             $endDate = $request->endDate;
             
-            $query->where(DB::raw('DATE(settlement_date)'), '>=', $startDate);
-            $query->where(DB::raw('DATE(settlement_date)'), '<=', $endDate);
+            $query->where(DB::raw('DATE(created_at)'), '>=', $startDate);
+            $query->where(DB::raw('DATE(created_at)'), '<=', $endDate);
         }
-        $query->orderByDesc('settlement_date');
+        $query->orderBy('created_at');
+        
         return DataTables::of($query->get())->addIndexColumn()->make(true);
     }
 

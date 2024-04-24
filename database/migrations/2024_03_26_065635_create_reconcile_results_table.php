@@ -19,9 +19,9 @@ return new class extends Migration
             $table->bigInteger('statement_id');
             $table->bigInteger('request_id');
             $table->string('status');
-            $table->string('tid');
+            $table->string('tid')->nullable();
             $table->string('mid');
-            $table->string('batch_fk');
+            $table->string('batch_fk')->nullable();
             $table->string('trx_counts');
             $table->string('total_sales');
             $table->string('processor_payment');
