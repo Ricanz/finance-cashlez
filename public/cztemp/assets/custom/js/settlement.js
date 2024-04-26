@@ -100,6 +100,13 @@ var KTDatatablesServerSide = (function () {
                     className: "text-center",
                     width: "200px",
                     render: function (data, type, row) {
+                        if (!privCreate || privCreate == "0") {
+                            return `
+                                <a href="javascript:void(0)"  class="btn btn-secondary btn-sm rounded-sm disabled">
+                                    Access Disabled
+                                </a>
+                            `;
+                        }
                         if (row.is_reconcile == "0" || !row.is_reconcile) {
                             return `
                                 <a href="javascript:void(0)" id="reconcile_${data}" onclick="reconcile('${data}')" class="btn btn-primary btn-active-light-primary btn-sm rounded-sm">

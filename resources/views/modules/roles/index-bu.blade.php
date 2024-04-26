@@ -1,6 +1,3 @@
-@php
-    $priv = App\Helpers\Utils::getPrivilege('settlement');
-@endphp
 <x-app-layout>
     <div class="container">
         <div class="card card-flush px-10 py-6 rounded-sm">
@@ -23,22 +20,22 @@
                         </span>
                         <!--end::Svg Icon-->
                         <input type="text" data-kt-docs-table-filter="search"
-                            class="form-control form-control-solid w-250px ps-14 rounded-sm"
-                            placeholder="Search Bank" />
+                            class="form-control form-control-solid w-250px ps-14 rounded-sm" placeholder="Search Role" />
                     </div>
                     <!--end::Search-->
                 </div>
                 <!--end::Search-->
 
                 <!--begin::Toolbar-->
-                @if ($priv->create)
-                    <div class="d-flex justify-content-end" data-kt-docs-table-toolbar="base">
-                        <!--begin::Filter-->
-                        <a href="#" class="btn btn-light-primary me-3 rounded-sm" data-bs-toggle="modal"
-                            data-bs-target="#kt_modal_new_target">Add New Record</a>
-                        <!--end::Filter-->
-                    </div>
-                @endif
+                <div class="d-flex justify-content-end" data-kt-docs-table-toolbar="base">
+                    <!--begin::Filter-->
+                    {{-- <button type="button" class="btn btn-light-primary me-3" data-bs-toggle="tooltip"
+                        title="Coming Soon">
+                        <span class="svg-icon svg-icon-2">...</span>
+                        Filter
+                    </button> --}}
+                    <!--end::Filter-->
+                </div>
                 <!--end::Toolbar-->
 
             </div>
@@ -48,15 +45,12 @@
             <table id="kt_datatable_example_1" class="table align-middle table-row-dashed fs-6 gy-5">
                 <thead>
                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                        <th>No</th>
-                        <th>Upload Date</th>
-                        <th>Bank Name</th>
-                        <th>Link File</th>
-                        <th>Trx Count (Debit)</th>
-                        <th>Total Amount (Debit)</th>
-                        <th>Trx Count (Credit)</th>
-                        <th>Total Amount (Credit)</th>
-                        <th>Uploaded By</th>
+                        <th>Title</th>
+                        <th>Status</th>
+                        <th>Created Date</th>
+                        <th>Created By</th>
+                        <th>Modified Date</th>
+                        <th>Modified By</th>
                         <th class="text-end min-w-100px">Actions</th>
                     </tr>
                 </thead>
@@ -66,12 +60,8 @@
             <!--end::Datatable-->
         </div>
     </div>
-    @include('/modules/settlement/create-modal')
 
     @section('scripts')
-        <script>
-            var privCreate = {!! $priv->create !!};
-        </script>
-        <script src="{{ asset('cztemp/assets/custom/js/settlement.js') }}"></script>
+        <script src="{{ asset('cztemp/assets/custom/js/role.js') }}"></script>
     @endsection
 </x-app-layout>

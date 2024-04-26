@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Yajra\DataTables\Facades\DataTables;
 
 class UserController extends Controller
@@ -49,7 +51,8 @@ class UserController extends Controller
     public function edit($uuid)
     {
         $data = User::where('uuid', $uuid)->first();
-        return view('modules.users.edit', compact('data'));
+        $role = Role::where('id', '!=', 1)->get();
+        return view('modules.users.edit', compact('data', 'role'));
     }
 
     /**
@@ -66,8 +69,8 @@ class UserController extends Controller
             $data = User::where('uuid', $request->uuid)->first();
             $data->name = $request->name;
             $data->email = $request->email;
-            $data->password = $request->password;
-            $data->role = $request->role;
+            $data->password = Hash::make($request->password);
+            $data->role = $request->role_id;
             if ($data->save()) {
                 DB::commit();
                 return  response()->json(['message'=> "Successfully update data!", 'status' => true], 200);

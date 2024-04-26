@@ -201,7 +201,7 @@ $("#update_user_form").on("submit", function (event) {
                         confirmButton: "btn font-weight-bold btn-light-primary"
                     }
                 }).then(function() {
-                    location.href = "admin/cashbacks";
+                    location.href = "/users";
                 });
             }else {
                 var values = '';

@@ -13,6 +13,8 @@
             $status = 'DISPUTE';
             break;
     }
+
+    $priv = App\Helpers\Utils::getPrivilege('reconcile');
 @endphp
 <x-app-layout>
     <div id="kt_content_container" class="container-xxl">
@@ -56,10 +58,12 @@
 
                 <div class="d-flex justify-content-end mb-0 w-25 ms-1">
                     <button id="refreshButton" class="btn btn-sm btn-light-warning w-100 me-1">Clear Table</button>
-                    <form action="#" id="singleReconcile">
-                        @csrf
-                        <button type="submit" id="kt_modal_new_target_submit" class="btn btn-sm btn-light-primary w-100 ms-2">Reconcile</button>
-                    </form>
+                    @if ($priv->create)
+                        <form action="#" id="singleReconcile">
+                            @csrf
+                            <button type="submit" id="kt_modal_new_target_submit" class="btn btn-sm btn-light-primary w-100 ms-2">Reconcile</button>
+                        </form>
+                    @endif
                 </div>
             </div>
         </div>

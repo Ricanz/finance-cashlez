@@ -9,6 +9,8 @@ use App\Models\MasterPrivilege;
 use App\Models\Merchant;
 use App\Models\MerchantDocument;
 use App\Models\MerchantPayment;
+use App\Models\Privilege;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -54,6 +56,17 @@ class Utils
         return csrf_token();
     }
 
+    public static function countTotalRoles($roleId)
+    {
+        return User::where('role', $roleId)->where('status', 'active')->count();
+    }
+
+    public static function restOfPrivilege($roleId)
+    {
+        $privilege = Privilege::where('role_id', $roleId)->where('status', 'active')->count();
+        return 5 - $privilege;
+    }
+
     public static function calculateMerchantPayment($bankTransfer, $feeMdrMerchant, $feeBankMerchant, $taxPayment)
     {
         $calculate = $bankTransfer - (($feeMdrMerchant - $feeBankMerchant) + $taxPayment);
@@ -76,4 +89,16 @@ class Utils
         }
     }
 
+    public static function getPrivilege($desc)
+    {
+        $user = Auth::user();
+        $data = Privilege::where('description', $desc)->where('role_id', $user->role)->first();
+        return $data;
+    }
+
+    public static function getRoleName($roleId)
+    {
+        $roleName = Role::where('id', $roleId)->pluck('title')->first();
+        return $roleName;
+    }
 }

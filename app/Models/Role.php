@@ -14,4 +14,9 @@ class Role extends Model
         'modified_by',
         'updated_at'
     ];
+
+    public function privileges()
+    {
+        return $this->hasMany(Privilege::class, 'role_id', 'id');
+    }
 }

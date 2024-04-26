@@ -48,10 +48,10 @@
                             <!--begin::Input-->
                             <select name="role_id" aria-label="Select a Role" data-control="select2"
                                 data-placeholder="Select a Role..." class="form-select form-select-solid fw-bolder">
-                                <option value="">Select a Role...</option>
-                                <option value="AF">Finance Staff</option>
-                                <option value="AX">Finance Manager</option>
-                                <option value="AL">Finance Head</option>
+                                <option value="{{ $data->role }}">{{ App\Helpers\Utils::getRoleName($data->role) }}</option>
+                                @foreach ($role as $item)
+                                    <option value="{{ $item->id }}">{{ $item->title }}</option>
+                                @endforeach
                             </select>
                             <!--end::Input-->
                         </div>
@@ -92,7 +92,7 @@
                     <a href="/users" class="btn btn-light me-3">Back</a>
                     <!--end::Button-->
                     <!--begin::Button-->
-                    <button type="submit" name="button" class="btn btn-primary"></button>
+                    <button type="submit" name="button" class="btn btn-primary">Save</button>
                     <!--end::Button-->
                 </div>
             </form>

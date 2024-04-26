@@ -69,17 +69,11 @@ class SettlementController extends Controller
                         foreach ($header as $index => $columnName) {
                             $column = strtolower(str_replace(" ", "_", $columnName));
                             $name = strtolower(str_replace(".", "", $column));
-                            if ($index == 5) {
-                                $name = 'description_2';
-                            } else if ($index == 4) {
-                                $name = 'description_1';
-                            }
                             $mappedRow[$name] = $row[$index] ?? null;
                         }
 
                         $mappedData[] = $mappedRow;
                     }
-
                     fclose($handle);
                 } else {
                     DB::rollBack();
@@ -87,24 +81,19 @@ class SettlementController extends Controller
                 }
 
                 foreach ($mappedData as $key => $value) {
-                    $splits = explode('/', $value['description_2']);
-                    if ($value['description_1'] == 'Pbyrn Merchant ') {
-                        $typeCode = '001';
-                    } else {
-                        $typeCode = '002';
-                    }
+                    $credit_amount = (float)str_replace(',', '', $value['credit_amount']);
+                    $debit_amount = (float)str_replace(',', '', $value['debit_amount']);
+                    
                     UploadBankDetail::create([
                         'token_applicant' => $upload->token_applicant,
-                        'account_no' => $value['account_no'],
-                        'amount_debit' => str_replace(',', '', $value['debit']),
-                        'amount_credit' => str_replace(',', '', $value['credit']),
-                        'transfer_date' => $value['val_date'],
-                        'date' => $value['date'],
-                        'statement_code' => $value['reference_no'],
-                        'type_code' => $typeCode,
-                        'description1' => $value['description_1'],
-                        'mid' => $splits[0] ? preg_replace('/\s+/','',$splits[0]) : '-',
-                        'merchant_name' => isset($splits[1]) ? preg_replace('/\s+/','',$splits[1]) : '-',
+                        'account_no' => $value['account_number'],
+                        'transfer_date' => $value['date'],
+                        'description2' => $value['channel'],
+                        'description1' => $value['description'],
+                        'type_code' => strtolower(str_replace(' ','',$value['description'])) === 'pbyrnmerchant' ? '001' : '002',
+                        'amount_debit' => $debit_amount,
+                        'amount_credit' => $credit_amount,
+                        'mid' => $value['mid'], 
                         'created_by' => $user->name,
                         'modified_by' => $user->name
                     ]);
@@ -112,6 +101,7 @@ class SettlementController extends Controller
                 DB::commit();
                 return  response()->json(['message' => 'Successfully upload data!', 'status' => true], 200);
             } catch (\Throwable $th) {
+                dd($th);
                 DB::rollBack();
                 return  response()->json(['message' => 'Error while uploading, try again', 'status' => false], 200);
             }
@@ -160,4 +150,82 @@ class SettlementController extends Controller
         $query->orderByDesc('id');
         return DataTables::of($query->get())->addIndexColumn()->make(true);
     }
+
+    // OLD LOGIC RIYANTI
+    // public function store(Request $request)
+    // {
+    //     $user = Auth::user();
+    //     if ($request->hasFile('file')) {
+    //         $file = $request->file('file');
+
+    //         $mappedData = [];
+
+    //         DB::beginTransaction();
+    //         try {
+    //             if (($handle = fopen($file->getPathname(), 'r')) !== false) {
+    //                 $upload = UploadBank::create([
+    //                     'token_applicant' => Str::uuid(),
+    //                     'type' => 'API',
+    //                     'url' => $request->url,
+    //                     'processor' => $request->bank,
+    //                     'process_status' => 'COMPLETED',
+    //                     'created_by' => $user->name,
+    //                     'updated_by' => $user->name
+    //                 ]);
+    //                 if (!$upload) {
+    //                     DB::rollBack();
+    //                     return  response()->json(['message' => 'Error while uploading, try again', 'status' => false], 200);
+    //                 }
+    //                 $header = fgetcsv($handle);
+
+    //                 while (($row = fgetcsv($handle)) !== false) {
+    //                     $mappedRow = [];
+    //                     foreach ($header as $index => $columnName) {
+    //                         $column = strtolower(str_replace(" ", "_", $columnName));
+    //                         $name = strtolower(str_replace(".", "", $column));
+    //                         if ($index == 5) {
+    //                             $name = 'description_2';
+    //                         } else if ($index == 4) {
+    //                             $name = 'description_1';
+    //                         }
+    //                         $mappedRow[$name] = $row[$index] ?? null;
+    //                     }
+
+    //                     $mappedData[] = $mappedRow;
+    //                 }
+
+    //                 fclose($handle);
+    //             } else {
+    //                 DB::rollBack();
+    //                 return  response()->json(['message' => 'Failed to open CSV file', 'status' => false], 200);
+    //             }
+
+    //             foreach ($mappedData as $key => $value) {
+    //                 $splits = explode('/', $value['description_2']);
+    //                 UploadBankDetail::create([
+    //                     'token_applicant' => $upload->token_applicant,
+    //                     'account_no' => $value['account_no'],
+    //                     'amount_debit' => str_replace(',', '', $value['debit']),
+    //                     'amount_credit' => str_replace(',', '', $value['credit']),
+    //                     'transfer_date' => $value['val_date'],
+    //                     'date' => $value['date'],
+    //                     'statement_code' => $value['reference_no'],
+    //                     'type_code' => strtolower($value['description_1']) === 'pbyrn merchant' ? '001' : '002',
+    //                     'description1' => $value['description_1'],
+    //                     'mid' => $splits[0] ? preg_replace('/\s+/','',$splits[0]) : '-',
+    //                     'merchant_name' => isset($splits[1]) ? preg_replace('/\s+/','',$splits[1]) : '-',
+    //                     'created_by' => $user->name,
+    //                     'modified_by' => $user->name
+    //                 ]);
+    //             }
+    //             DB::commit();
+    //             return  response()->json(['message' => 'Successfully upload data!', 'status' => true], 200);
+    //         } catch (\Throwable $th) {
+    //             DB::rollBack();
+    //             return  response()->json(['message' => 'Error while uploading, try again', 'status' => false], 200);
+    //         }
+    //     } else {
+    //         return  response()->json(['message' => 'No file uploaded', 'status' => false], 200);
+    //     }
+    // }
 }

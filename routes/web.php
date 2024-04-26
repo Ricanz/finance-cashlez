@@ -42,6 +42,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/roles/edit/{id}', [RoleController::class, 'edit'])->name('role.edit');
     Route::post('/roles/update', [RoleController::class, 'update'])->name('role.update');
     Route::get('/roles/destroy/{id}', [RoleController::class, 'destroy'])->name('role.destroy');
+    Route::get('/role/detail/{slug}', [RoleController::class, 'detail'])->name('role.detail');
+    Route::post('/privilege/update', [RoleController::class, 'privilege'])->name('role.privilege');
 
     // Bank
     Route::get('/banks', [BankController::class, 'index'])->name('bank.index');

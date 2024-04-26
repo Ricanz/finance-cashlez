@@ -195,7 +195,7 @@ function mrcDetail(tokenApplicant) {
             console.log(response);
             var data = response.data
             document.getElementById("settlementDate").innerHTML = to_date_time(data.settlement_date);
-            document.getElementById("batch").innerHTML = data.batch_fk;``
+            document.getElementById("batch").innerHTML = data.batch_fk;
             document.getElementById("bankType").innerHTML = '-';
             document.getElementById("mrc").innerHTML = data.merchant.reference_code;
             document.getElementById("merchantName").innerHTML = data.merchant.name;
