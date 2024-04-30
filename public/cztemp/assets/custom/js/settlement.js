@@ -1,4 +1,7 @@
 "use strict";
+$("#kt_daterangepicker_1").daterangepicker();
+$("#kt_daterangepicker_2").daterangepicker();
+$("#kt_daterangepicker_3").daterangepicker();
 
 var KTDatatablesServerSide = (function () {
     var dt;
@@ -256,6 +259,59 @@ $("#store_settlement_form").on("submit", function(event) {
         type: 'POST',
         data: formData,
         url: '/settlement',
+        dataType: 'JSON',
+        cache: false,
+        contentType: false,
+        processData: false,
+        beforeSend: function() {
+            swal.showLoading();
+        },
+        success: function(data) {
+            if (data.status === true) {
+                swal.hideLoading();
+                swal.fire({
+                    text: data.message,
+                    icon: "success",
+                    buttonsStyling: false,
+                    confirmButtonText: "Ok, got it!",
+                    customClass: {
+                        confirmButton: "btn font-weight-bold btn-light-primary"
+                    }
+                }).then(function() {
+                    location.href = "/settlement";
+                });
+            } else {
+                var values = '';
+                jQuery.each(data.message, function(key, value) {
+                    values += value + "<br>";
+                });
+
+                swal.fire({
+                    text: data.message,
+                    html: values,
+                    icon: "error",
+                    buttonsStyling: false,
+                    confirmButtonText: "Ok, got it!",
+                    customClass: {
+                        confirmButton: "btn font-weight-bold btn-light-primary"
+                    }
+                }).then(function() {});
+            }
+        }
+    });
+}); 
+
+$("#store_reconcile_form").on("submit", function(event) {
+    event.preventDefault();
+    var token = $('meta[name="csrf-token"]').attr('content');
+    var formData = new FormData(this);
+    $.ajax({
+        headers: {
+            'X-CSRF-TOKEN': token
+        },
+        type: 'POST',
+        data: formData,
+        url: '/reconcile',
         dataType: 'JSON',
         cache: false,
         contentType: false,

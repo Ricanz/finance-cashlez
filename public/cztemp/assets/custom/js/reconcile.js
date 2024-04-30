@@ -70,7 +70,7 @@ var KTDatatablesServerSide = (function () {
                     className: "text-start",
                     width: "800px",
                     render: function (data, type, row) {
-                        return to_date_time(data);
+                        return to_date(data);
                     },
                 },
                 {

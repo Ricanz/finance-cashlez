@@ -25,6 +25,8 @@ return new class extends Migration
             $table->string('created_by', 150)->nullable();
             $table->string('updated_by', 150)->nullable();
             $table->string('file_id', 255)->nullable();
+            $table->timestamp('start_date')->nullable();
+            $table->timestamp('end_date')->nullable();
             $table->timestamps();
         });
     }

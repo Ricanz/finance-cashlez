@@ -8,6 +8,7 @@ use App\Models\InternalMerchant;
 use App\Models\InternalTransaction;
 use App\Models\UploadBank;
 use App\Models\UploadBankDetail;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -40,6 +41,10 @@ class SettlementController extends Controller
 
     public function store(Request $request)
     {
+        $splitDate = explode(' - ', $request->range_date);
+        $startDate = Carbon::createFromFormat('m/d/Y', $splitDate[0]);
+        $endDate = Carbon::createFromFormat('m/d/Y', $splitDate[1]);
+
         $user = Auth::user();
         if ($request->hasFile('file')) {
             $file = $request->file('file');
@@ -55,6 +60,8 @@ class SettlementController extends Controller
                         'url' => $request->url,
                         'processor' => $request->bank,
                         'process_status' => 'COMPLETED',
+                        'start_date' => $startDate,
+                        'end_date' => $endDate,
                         'created_by' => $user->name,
                         'updated_by' => $user->name
                     ]);

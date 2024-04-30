@@ -19,6 +19,8 @@ class UploadBank extends Model
         'created_by',
         'modified_by',
         'file_id',
+        'start_date',
+        'end_date',
         'created_at',
         'updated_at'
     ];

@@ -63,6 +63,7 @@ Route::middleware('auth')->group(function () {
 
     // Reconcile
     Route::get('/reconcile', [ReconcileController::class, 'index'])->name('reconcile.index');
+    Route::post('/reconcile', [ReconcileController::class, 'store'])->name('reconcile.store');
     Route::get('/reconcile/result', [ReconcileController::class, 'result'])->name('reconcile.result');
     Route::get('/reconcile/{token}/proceed', [ReconcileController::class, 'proceed'])->name('reconcile.proceed');
     Route::get('/reconcile/{token}/show', [ReconcileController::class, 'show'])->name('reconcile.show');
