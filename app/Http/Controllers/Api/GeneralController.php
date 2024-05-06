@@ -32,7 +32,6 @@ class GeneralController extends RestController
 
     public function upload(Request $request)
     {
-        dd($request->all());
         $upload = Utils::uploadImageOri($request->file);
         return RestController::sendResponse(null, $upload);
     }
@@ -44,7 +43,6 @@ class GeneralController extends RestController
 
     public function store(Request $request)
     {
-        dd($request->all());
         $this->readAndMapCSV($request->file);
     }
 

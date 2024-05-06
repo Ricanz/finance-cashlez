@@ -555,6 +555,8 @@
                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
                         <th>No</th>
                         <th>Upload Date</th>
+                        <th>Settlement Start Date</th>
+                        <th>Settlement End Date</th>
                         <th>Bank Name</th>
                         <th>Link File</th>
                         <th>Trx Count (Debit)</th>
@@ -562,7 +564,7 @@
                         <th>Trx Count (Credit)</th>
                         <th>Total Amount (Credit)</th>
                         <th>Uploaded By</th>
-                        <th class="text-end min-w-100px">Actions</th>
+                        {{-- <th class="text-end min-w-100px">Actions</th> --}}
                     </tr>
                 </thead>
                 <tbody class="text-gray-600 fw-bold">

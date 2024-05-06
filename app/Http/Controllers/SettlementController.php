@@ -74,7 +74,7 @@ class SettlementController extends Controller
                     while (($row = fgetcsv($handle)) !== false) {
                         $mappedRow = [];
                         foreach ($header as $index => $columnName) {
-                            $column = strtolower(str_replace(" ", "_", $columnName));
+                            $column = strtolower(str_replace(" ", "_", trim($columnName)));
                             $name = strtolower(str_replace(".", "", $column));
                             $mappedRow[$name] = $row[$index] ?? null;
                         }
@@ -93,7 +93,7 @@ class SettlementController extends Controller
                     
                     UploadBankDetail::create([
                         'token_applicant' => $upload->token_applicant,
-                        'account_no' => $value['account_number'],
+                        'account_no' => isset($value['account_number']) ? $value['account_number'] : '',
                         'transfer_date' => $value['date'],
                         'description2' => $value['channel'],
                         'description1' => $value['description'],

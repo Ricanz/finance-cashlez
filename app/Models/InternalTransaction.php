@@ -7,7 +7,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class InternalTransaction extends Model
 {
-    use HasFactory;
+    protected $fillable = [
+        'settelment_date',
+        'retrieval_number',
+        'transaction_amount',
+        'bank_payment',
+        'txid',
+        'batch_fk',
+        'bank_fee_amount',
+        'merchant_fee_amount',
+        'tax_amount',
+        'transaction_type',
+        'status',
+        'comparator_code'
+    ];
 
     public function header()
     {

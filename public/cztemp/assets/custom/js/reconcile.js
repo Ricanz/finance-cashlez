@@ -1,14 +1,24 @@
 "use strict";
+$("#kt_daterangepicker_1").daterangepicker();
 
+// $('#btn-kt_daterangepicker_1').on('click', function() {
+//     console.log("here");
+//     // var dateRangeValue = $('#kt_daterangepicker_1').val();
+
+//     // var newUrl = window.location.href.split('?')[0] + '?dateRange=' + encodeURIComponent(dateRangeValue);
+//     // window.location.href = newUrl;
+// });
 var KTDatatablesServerSide = (function () {
     var dt;
     var uuid = ''; var url = '';
     var status = '';
+    var startDate = "";
+    var endDate = "";
     const queryParams = new URLSearchParams(window.location.search);
     
     var parUuid = queryParams.get('token');
     var parUstatus = queryParams.get('status');
-    console.log(uuid);
+    
 
     if (parUuid) {
         uuid = `token=${parUuid}`;
@@ -34,7 +44,11 @@ var KTDatatablesServerSide = (function () {
                 className: "row-selected",
             },
             ajax: {
-                url
+                url,
+                data: function (d) {
+                    d.startDate = startDate;
+                    d.endDate = endDate;
+                },
             },
             columns: [
                 { data: "id" },
@@ -170,6 +184,10 @@ var KTDatatablesServerSide = (function () {
         });
     };
 
+    var reloadDatatable = function () {
+        dt.ajax.reload();
+    };
+
     var handleSearchDatatable = function () {
         const filterSearch = document.querySelector(
             '[data-kt-docs-table-filter="search"]'
@@ -179,13 +197,39 @@ var KTDatatablesServerSide = (function () {
         });
     };
 
+    var initDateRangePicker = function () {
+        $('#kt_daterangepicker_1').daterangepicker({
+            opens: 'left',
+            startDate: moment().startOf('month'),
+            endDate: moment().endOf('month')
+        }, function(start, end, label) {
+            startDate = start.format('YYYY-MM-DD');
+            endDate = end.format('YYYY-MM-DD');
+            reloadDatatable();
+        });
+    };
+
+    var handleRefreshTable = function () {
+        const refreshButton = document.getElementById("refreshButton");
+        const searchTable = document.getElementById("searchTable");
+        refreshButton.addEventListener("click", function (e) {
+            searchTable.value = ''
+            dt.search('').draw();
+            reloadDatatable()
+        });
+    };
+
     return {
         init: function () {
             initDatatable();
             handleSearchDatatable();
+            reloadDatatable();
+            initDateRangePicker();
+            handleRefreshTable();
         },
     };
 })();
+
 
 function mrcDetail(tokenApplicant) {
     $.ajax({

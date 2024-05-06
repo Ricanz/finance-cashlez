@@ -30,7 +30,7 @@ class Utils
             }
             $path = url('images/' . $imageName);
             return $path;
-        } catch (\Throwable $th) {    
+        } catch (\Throwable $th) {
             return false;
         }
     }
@@ -46,7 +46,7 @@ class Utils
             }
             $path = url('images/' . $imageName);
             return $path;
-        } catch (\Throwable $th) {    
+        } catch (\Throwable $th) {
             return false;
         }
     }
@@ -81,8 +81,8 @@ class Utils
     public static function getStatusReconcile($treshold, $boSettlement, $bankSettlement)
     {
         if (($bankSettlement - $boSettlement) < $treshold &&
-                ($bankSettlement - $boSettlement) > (0 - $treshold)
-           ) {
+            ($bankSettlement - $boSettlement) > (0 - $treshold)
+        ) {
             return "MATCH";
         } else {
             return "NOT_MATCH";
@@ -100,5 +100,23 @@ class Utils
     {
         $roleName = Role::where('id', $roleId)->pluck('title')->first();
         return $roleName;
+    }
+
+    public static function customRound($number)
+    {
+        // $integerPart = intval($number);
+        $integerPart = floor($number);
+
+        $decimalPart = $number - $integerPart;
+        // dd($number, $integerPart, $decimalPart);
+
+        $roundedDecimal = round($decimalPart, 2);
+        // $roundedDecimal = round($decimalPart, 1);
+
+        if ($roundedDecimal >= 0.5) {
+            return ceil($number);
+        } else {
+            return floor($number);
+        }
     }
 }

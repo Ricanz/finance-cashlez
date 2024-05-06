@@ -11,7 +11,7 @@ var KTDatatablesServerSide = (function () {
             searchDelay: 200,
             processing: true,
             serverSide: true,
-            order: [[3, "desc"]],
+            order: [[1, "desc"]],
             stateSave: true,
             select: {
                 style: "os",
@@ -24,6 +24,8 @@ var KTDatatablesServerSide = (function () {
             columns: [
                 { data: "id" },
                 { data: "created_at" },
+                { data: "start_date" },
+                { data: "end_date" },
                 { data: "processor" },
                 { data: "url" },
                 { data: "credit_total" },
@@ -31,7 +33,6 @@ var KTDatatablesServerSide = (function () {
                 { data: "debit_total" },
                 { data: "debit_sum" },
                 { data: "created_by" },
-                { data: "token_applicant" },
             ],
             columnDefs: [
                 {
@@ -53,21 +54,21 @@ var KTDatatablesServerSide = (function () {
                     },
                 },
                 {
-                    targets: 4,
+                    targets: 2,
                     orderable: true,
-                    className: "text-center",
-                    width: "30px",
+                    className: "text-start",
+                    width: "300px",
                     render: function (data, type, row) {
-                        return data;
+                        return to_date(data);
                     },
                 },
                 {
-                    targets: 5,
+                    targets: 3,
                     orderable: true,
                     className: "text-start",
-                    width: "150px",
+                    width: "300px",
                     render: function (data, type, row) {
-                        return to_rupiah(data);
+                        return to_date(data);
                     },
                 },
                 {
@@ -89,7 +90,25 @@ var KTDatatablesServerSide = (function () {
                     },
                 },
                 {
-                    targets: 3,
+                    targets: 8,
+                    orderable: true,
+                    className: "text-center",
+                    width: "30px",
+                    render: function (data, type, row) {
+                        return data;
+                    },
+                },
+                {
+                    targets: 9,
+                    orderable: true,
+                    className: "text-start",
+                    width: "150px",
+                    render: function (data, type, row) {
+                        return to_rupiah(data);
+                    },
+                },
+                {
+                    targets: 5,
                     orderable: true,
                     className: "text-center",
                     width: "100px",
@@ -97,38 +116,38 @@ var KTDatatablesServerSide = (function () {
                         return `<a href='${data}'>Dowload File</a>`;
                     },
                 },
-                {
-                    targets: -1,
-                    orderable: false,
-                    className: "text-center",
-                    width: "200px",
-                    render: function (data, type, row) {
-                        if (!privCreate || privCreate == "0") {
-                            return `
-                                <a href="javascript:void(0)"  class="btn btn-secondary btn-sm rounded-sm disabled">
-                                    Access Disabled
-                                </a>
-                            `;
-                        }
-                        if (row.is_reconcile == "0" || !row.is_reconcile) {
-                            return `
-                                <a href="javascript:void(0)" id="reconcile_${data}" onclick="reconcile('${data}')" class="btn btn-primary btn-active-light-primary btn-sm rounded-sm">
-                                    Reconcile
-                                </a>
-                            `;
-                        }
-                        return `
-                            <div class="d-flex">
-                                <a href="/reconcile/result?token=${data}" class="btn btn-success btn-active-light-success btn-sm rounded-sm">
-                                    View
-                                </a>
-                                <a href="/reconcile/download?token=${data}" class="btn btn-light-warning btn-sm rounded-sm mx-2">
-                                    Download
-                                </a>
-                            </div>
-                        `;
-                    },
-                },
+                // {
+                //     targets: -1,
+                //     orderable: false,
+                //     className: "text-center",
+                //     width: "200px",
+                //     render: function (data, type, row) {
+                //         if (!privCreate || privCreate == "0") {
+                //             return `
+                //                 <a href="javascript:void(0)"  class="btn btn-secondary btn-sm rounded-sm disabled">
+                //                     Access Disabled
+                //                 </a>
+                //             `;
+                //         }
+                //         if (row.is_reconcile == "0" || !row.is_reconcile) {
+                //             return `
+                //                 <a href="javascript:void(0)" id="reconcile_${data}" onclick="reconcile('${data}')" class="btn btn-primary btn-active-light-primary btn-sm rounded-sm">
+                //                     Reconcile
+                //                 </a>
+                //             `;
+                //         }
+                //         return `
+                //             <div class="d-flex">
+                //                 <a href="/reconcile/result?token=${data}" class="btn btn-success btn-active-light-success btn-sm rounded-sm">
+                //                     View
+                //                 </a>
+                //                 <a href="/reconcile/download?token=${data}" class="btn btn-light-warning btn-sm rounded-sm mx-2">
+                //                     Download
+                //                 </a>
+                //             </div>
+                //         `;
+                //     },
+                // },
             ],
 
             createdRow: function (row, data, dataIndex) {

@@ -9,12 +9,14 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 
 class ReconcileExport implements FromCollection, WithHeadings, WithMapping
 {
-    protected $token_applicant, $status;
+    protected $token_applicant, $status, $startDate, $endDate;
 
-    public function __construct($token_applicant, $status)
+    public function __construct($token_applicant, $status, $startDate, $endDate)
     {
         $this->token_applicant = $token_applicant;
         $this->status = $status;
+        $this->startDate = $startDate;
+        $this->endDate = $endDate;
     }
 
     /**
