@@ -350,7 +350,7 @@ $("#store_reconcile_form").on("submit", function(event) {
                         confirmButton: "btn font-weight-bold btn-light-primary"
                     }
                 }).then(function() {
-                    location.href = "/settlement";
+                    location.href = "/reconcile/result";
                 });
             } else {
                 var values = '';

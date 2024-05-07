@@ -14,7 +14,7 @@ class GeneralController extends Controller
 {
     public function job()
     {
-        $url = 'https://api.cashlez.com/helper-service/finance-settlement-reconcile-by-date?settlement-date=2024-03-04';
+        $url = 'https://api.cashlez.com/helper-service/finance-settlement-reconcile-by-date?settlement-date=2024-03-08';
         $client = new Client([
             'verify' => false,
             'timeout' => 240
@@ -34,16 +34,20 @@ class GeneralController extends Controller
 
                 $merchantDTO = $value->merchantDTO;
 
-                $createdAt = Carbon::createFromFormat('Y-m-d', '2024-03-04');
+                $createdAt = Carbon::createFromFormat('Y-m-d', '2024-03-08');
                 $batch = InternalBatch::create([
-                    'batch_fk' => $batchDto->batchId,
+                    // 'batch_fk' => $batchDto->batchId,
+                    'batch_fk' => null,
                     'transaction_count' => $batchDto->transactionCount,
-                    'status' => $batchDto->status,
-                    'tid' => $batchDto->tid,
+                    // 'status' => $batchDto->status,
+                    'status' => 'SUCCESSFUL',
+                    // 'tid' => $batchDto->tid,
+                    'tid' => null,
                     'mid' => $batchDto->mid,
                     'merchant_name' => $merchantDTO->name,
                     'processor' => $batchDto->processor, 
-                    'batch_running_no' => $batchDto->batchRunningNo,
+                    // 'batch_running_no' => $batchDto->batchRunningNo,
+                    'batch_running_no' => null,
                     'merchant_id' => $merchantDTO->id ,
                     'mid_ppn' => $batchDto->midPpn,
                     'transaction_amount' => $batchDto->transactionAmount,

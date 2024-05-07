@@ -3,6 +3,7 @@
 namespace App\Exports;
 
 use App\Models\ReconcileResult;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
@@ -28,15 +29,20 @@ class ReconcileExport implements FromCollection, WithHeadings, WithMapping
         if ($this->token_applicant) {
             $query->where('token_applicant', $this->token_applicant);
         }
-        if ($this->status) {
-            if ($this->status == "match") {
-                $query->where('status', 'MATCH');
-            } elseif ($this->status == "dispute") {
-                $query->whereIn('status', ['NOT_MATCH', 'NOT_FOUND']);
+        if ($this->status != 'all') {
+            if ($this->status) {
+                if ($this->status == "match") {
+                    $query->where('status', 'MATCH');
+                } elseif ($this->status == "dispute") {
+                    $query->whereIn('status', ['NOT_MATCH', 'NOT_FOUND']);
+                }
             }
         }
 
-        return $query->get(); // Return the result of the query
+        $query->where(DB::raw('DATE(settlement_date)'), '>=', $this->startDate);
+        $query->where(DB::raw('DATE(settlement_date)'), '<=', $this->endDate);
+
+        return $query->get();
     }
 
     public function map($data): array

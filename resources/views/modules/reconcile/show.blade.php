@@ -122,7 +122,8 @@
                 <div class="d-flex justify-content-end" data-kt-docs-table-toolbar="base">
                     <!--begin::Filter-->
                     <button id="refreshButton" class="btn btn-sm btn-light-primary w-100 me-3 rounded-sm">Refresh Table</button>
-                    <a href="{{ url($downloadUrl) }} " class="btn btn-light-warning me-3 rounded-sm">Download</a>
+                    {{-- <a href="{{ url($downloadUrl) }} " class="btn btn-light-warning me-3 rounded-sm">Download</a> --}}
+                    <a href="#" class="btn btn-sm btn-light-warning me-3 rounded-sm" data-bs-toggle="modal" data-bs-target="#kt_modal_download">Download</a>
 
                     <!--end::Filter-->
                 </div>
@@ -160,6 +161,7 @@
         </div>
     </div>
     @include('/modules/reconcile/mrc-modal')
+    @include('/modules/reconcile/download-modal')
 
     @section('scripts')
         <script src="{{ asset('cztemp/assets/custom/js/reconcile.js') }}"></script>

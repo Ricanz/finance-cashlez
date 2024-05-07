@@ -141,93 +141,6 @@ class ReconcileController extends Controller
                 }
             }
 
-            // $details = UploadBankDetail::where('token_applicant', $token_applicant)->where('type_code', '001')->where('is_reconcile', false)->get();
-
-            // foreach ($details as $key => $value) {
-            //     $carbonDate = Carbon::createFromFormat('d/m/Y', $value->transfer_date);
-            //     $formattedDate = $carbonDate->format('Y-m-d');
-            //     $internalBatch = InternalBatch::selectRaw('
-            //                     SUM(transaction_count) as transaction_count,
-            //                     SUM(bank_transfer) as bank_transfer,
-            //                     SUM(fee_mdr_merchant) as fee_mdr_merchant,
-            //                     SUM(fee_bank_merchant) as fee_bank_merchant,
-            //                     SUM(tax_payment) as tax_payment,
-            //                     SUM(transaction_amount) as transaction_amount,
-            //                     merchant_id,
-            //                     mid
-            //                 ')
-            //         ->where('mid', 'like', '%' . $value->mid . '%')
-            //         ->where(DB::raw('DATE(created_at)'), '=', $formattedDate)
-            //         ->groupBy('mid', 'merchant_id')
-            //         ->first();
-
-            //     $bankSettlement = $value->amount_credit;
-            //     $rounded_value = round((int)$bankSettlement);
-            //     $amount_credit = number_format($rounded_value, 0, '', '');
-            //     if ($internalBatch) {
-            //         $trxCount = $internalBatch->transaction_count;
-            //         $boSettlement = $internalBatch->bank_transfer;
-            //         $feeMdrMerchant = $internalBatch->fee_mdr_merchant;
-            //         $feeBankMerchant = $internalBatch->fee_bank_merchant;
-            //         $taxPayment = $internalBatch->tax_payment;
-            //         $totalSales = $internalBatch->bank_transfer + $internalBatch->fee_bank_merchant;
-            //         $merchant_id = $internalBatch->merchant_id;
-            //         $sumTransaction = $internalBatch->transaction_amount;
-
-            //         $merchantPayment = Utils::calculateMerchantPayment($boSettlement, $feeMdrMerchant, $feeBankMerchant, $taxPayment); // tanya mas tri
-
-            //         $diff = abs((float)$boSettlement - (float)$bankSettlement);
-            //         $treshold = Utils::calculateTreshold($trxCount);
-            //         $status = Utils::getStatusReconcile($treshold, $boSettlement, $bankSettlement);
-            //     } else {
-            //         $status = 'NOT_FOUND';
-            //         $trxCount = 0;
-            //         $totalSales = 0;
-            //         $boSettlement = 0;
-            //         $merchantPayment = 0;
-            //         $sumTransaction = 0;
-            //         $diff = 0 - (float)$bankSettlement;
-            //     }
-
-            //     $reconcile = ReconcileResult::create([
-            //         'token_applicant' => $token_applicant,
-            //         'statement_id' => $value->id,
-            //         'request_id' => $data->id,
-            //         'status' => $status,
-            //         // 'tid' => $tid,
-            //         'mid' => $value->mid,
-            //         // 'batch_fk' => $batch_fk,
-            //         'trx_counts' => $trxCount, // total transaksi 1 batch
-            //         'total_sales' => $totalSales, // sum transaction_amout di internal_taransaction 
-            //         'processor_payment' => $data->processor,
-            //         'internal_payment' => $boSettlement, // bank_payment
-            //         'merchant_payment' => $merchantPayment, // bank_payment - merchant_fee_amount
-            //         'merchant_id' => $merchant_id,
-            //         'transfer_amount' => $sumTransaction, // transaction_amount di internal_batch
-            //         'bank_settlement_amount' => $amount_credit, // bank_settlement
-            //         'dispute_amount' => $diff, // dispute_amount
-            //         // 'tax_payment',
-            //         // 'fee_mdr_merchant',
-            //         // 'fee_bank_merchant',
-            //         // 'bank_transfer',
-            //         'created_by' => 'System',
-            //         'modified_by' => null,
-            //         'settlement_date' => $carbonDate
-            //     ]);
-
-            //     $det = UploadBankDetail::where('id', $value->id)->first();
-
-            //     if ($status == 'MATCH') {
-            //         $det->is_reconcile = true;
-            //     } else {
-            //         $det->is_reconcile = false;
-            //     }
-            //     $det->save();
-
-            //     $data->is_reconcile = true;
-            //     $data->save();
-            // }
-
             DB::commit();
             return  response()->json(['message' => 'Successfully reconcile data!', 'status' => true], 200);
         } catch (\Throwable $th) {
@@ -359,103 +272,10 @@ class ReconcileController extends Controller
         $sumDispute = $query5->whereIn('status', ['NOT_MATCH', 'NOT_FOUND'])->sum('total_sales');
         $sumHold = $query6->where('status', 'ON_HOLD')->sum('total_sales');
 
-        return view('modules.reconcile.show', compact('match', 'dispute', 'onHold', 'sumMatch', 'sumDispute', 'sumHold'));
+        $banks = Bank::where('status', 'active')->get();
+        
+        return view('modules.reconcile.show', compact('banks', 'match', 'dispute', 'onHold', 'sumMatch', 'sumDispute', 'sumHold'));
     }
-
-    // public function proceed($token_applicant)
-    // {
-    //     $user = Auth::user();
-    //     $data = UploadBank::where('token_applicant', $token_applicant)->first();
-    //     if ($data) {
-    //         $details = UploadBankDetail::where('token_applicant', $token_applicant)->where(DB::raw('LOWER(description1)', '=', 'pbyrn merchant'))->where('is_reconcile', false)->get();
-    //         foreach ($details as $key => $value) {
-    //             $carbonDate = Carbon::createFromFormat('d/m/Y', $value->transfer_date);
-    //             $formattedDate = $carbonDate->format('Y-m-d');
-    //             // $batch_fk = '';
-    //             // $tid = '';
-
-    //             $internalBatch = InternalBatch::where('mid', 'like', '%' . $value->mid . '%')->where(DB::raw('DATE(created_at)'), '>=', $formattedDate)->first();
-    //             // if (!$internalBatch) {
-    //             //     return  response()->json(['message' => ['Data not found in Back Office'], 'status' => false], 400);
-    //             // }
-    //             $bankSettlement = $value->amount_credit;
-    //             $rounded_value = round((int)$bankSettlement);
-    //             $amount_credit = number_format($rounded_value, 0, '', '');
-    //             if ($internalBatch) {
-    //                 $trxCount = $internalBatch->transaction_count;
-    //                 $boSettlement = $internalBatch->bank_transfer;
-    //                 $feeMdrMerchant = $internalBatch->fee_mdr_merchant;
-    //                 $feeBankMerchant = $internalBatch->fee_bank_merchant;
-    //                 $taxPayment = $internalBatch->tax_payment;
-    //                 $totalSales = $internalBatch->transaction_amount;
-    //                 $merchant_id = $internalBatch->merchant_id;
-    //                 $sumTransaction = $internalBatch->transaction_amount;
-
-    //                 $merchantPayment = Utils::calculateMerchantPayment($boSettlement, $feeMdrMerchant, $feeBankMerchant, $taxPayment); // tanya mas tri
-
-    //                 $diff = abs((float)$boSettlement - (float)$bankSettlement);
-    //                 $treshold = Utils::calculateTreshold($trxCount);
-    //                 $status = Utils::getStatusReconcile($treshold, $boSettlement, $bankSettlement);
-    //             } else {
-    //                 $status = 'NOT_FOUND';
-    //                 $trxCount = 0;
-    //                 $totalSales = 0;
-    //                 $boSettlement = 0;
-    //                 $merchantPayment = 0;
-    //                 $sumTransaction = 0;
-    //                 $diff = 0 - (float)$bankSettlement;
-    //             }
-    //             dd("here");
-
-    //             DB::beginTransaction();
-    //             try {
-    //                 $reconcile = ReconcileResult::create([
-    //                     'token_applicant' => $token_applicant,
-    //                     'statement_id' => $value->id,
-    //                     'request_id' => $data->id,
-    //                     'status' => $status,
-    //                     // 'tid' => $tid,
-    //                     'mid' => $value->mid,
-    //                     // 'batch_fk' => $batch_fk,
-    //                     'trx_counts' => $trxCount, // total transaksi 1 batch
-    //                     'total_sales' => $totalSales, // sum transaction_amout di internal_taransaction 
-    //                     'processor_payment' => $data->processor,
-    //                     'internal_payment' => $boSettlement, // bank_payment
-    //                     'merchant_payment' => $merchantPayment, // bank_payment - merchant_fee_amount
-    //                     'merchant_id' => $merchant_id,
-    //                     'transfer_amount' => $sumTransaction, // transaction_amount di internal_batch
-    //                     'bank_settlement_amount' => $amount_credit, // bank_settlement
-    //                     'dispute_amount' => $diff, // dispute_amount
-    //                     // 'tax_payment',
-    //                     // 'fee_mdr_merchant',
-    //                     // 'fee_bank_merchant',
-    //                     // 'bank_transfer',
-    //                     'created_by' => 'System',
-    //                     'modified_by' => null,
-    //                     'settlement_date' => $carbonDate
-    //                 ]);
-    //                 if ($reconcile) {
-    //                     $det = UploadBankDetail::where('id', $value->id)->first();
-    //                     if ($status == 'MATCH') {
-    //                         $det->is_reconcile = true;
-    //                     } else {
-    //                         $det->is_reconcile = false;
-    //                     }
-    //                     $det->save();
-
-    //                     $data->is_reconcile = true;
-    //                     $data->save();
-    //                 }
-    //                 DB::commit();
-    //                 return  response()->json(['message' => 'Successfully reconcile data!', 'status' => true], 200);
-    //             } catch (\Throwable $th) {
-    //                 dd($th);
-    //                 DB::rollBack();
-    //                 return  response()->json(['message' => 'Error while reconcile, try again', 'status' => false], 200);
-    //             }
-    //         }
-    //     }
-    // }
 
     public function show($token_applicant)
     {
@@ -467,7 +287,9 @@ class ReconcileController extends Controller
         $sumDispute = ReconcileResult::where('token_applicant', $token_applicant)->whereIn('status', ['NOT_MATCH', 'NOT_FOUND'])->sum('total_sales');
         $sumHold = ReconcileResult::where('token_applicant', $token_applicant)->where('status', 'NOT_FOUND')->sum('total_sales');
 
-        return view('modules.reconcile.show', compact('match', 'dispute', 'onHold', 'token_applicant', 'sumMatch', 'sumDispute', 'sumHold'));
+        $banks = Bank::where('status', 'active')->get();
+        
+        return view('modules.reconcile.show', compact('banks', 'match', 'dispute', 'onHold', 'token_applicant', 'sumMatch', 'sumDispute', 'sumHold'));
     }
 
     public function data(Request $request)
@@ -520,16 +342,20 @@ class ReconcileController extends Controller
     {
         $token_applicant = request()->query('token');
         $status = request()->query('status');
+        $bank = request()->query('bank');
+
         $startDate = request()->query('startDate');
         $endDate = request()->query('endDate');
+
         if (!$status) {
             $text = 'all';
         } else {
             $text = $status;
         }
 
-        $filename = date('d-m-Y') . '-' . $text;
-        return Excel::download(new ReconcileExport($token_applicant, $status, $startDate, $endDate), 'reconcile' . $filename . '.xlsx');
+        $filename = $bank. '-' . $startDate . '-to-'. $endDate. '-' . $text;
+
+        return Excel::download(new ReconcileExport($token_applicant, $status, $startDate, $endDate), 'reconcile-' . $filename . '.xlsx');
     }
 
     public function mrcDetail($token_applicant)
