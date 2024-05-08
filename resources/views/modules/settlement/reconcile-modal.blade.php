@@ -39,16 +39,16 @@
                     <div class="d-flex flex-column mb-8 fv-row">
                         <!--begin::Label-->
                         <label class="d-flex align-items-center fs-6 fw-bold mb-2">
-                            <span class="required">Bank Name</span>
+                            <span class="required">Channel Name</span>
                             <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip"
                                 title="Name of the bank"></i>
                         </label>
                         <!--end::Label-->
-                        <select name="bank" aria-label="Select a Bank" data-control="select2"
-                            data-placeholder="Select a Bank..." class="form-select form-select-solid fw-bolder">
-                            <option value="">Select a Bank...</option>
+                        <select name="bank" aria-label="Select a Channel" data-control="select2"
+                            data-placeholder="Select a Channel..." class="form-select form-select-solid fw-bolder">
+                            <option value="">Select a Channel...</option>
                             @foreach ($banks as $item)
-                                <option value="{{ $item->name }}">{{ $item->name }}</option>
+                                <option value="{{ $item->channel }}">{{ $item->channel }}</option>
                             @endforeach
                         </select>
                     </div>

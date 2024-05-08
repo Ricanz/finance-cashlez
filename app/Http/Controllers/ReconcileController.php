@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Exports\ReconcileExport;
+use App\Helpers\Reconcile;
 use App\Helpers\Utils;
 use App\Models\Bank;
+use App\Models\BankParameter;
+use App\Models\Channel;
 use App\Models\InternalBatch;
 use App\Models\InternalMerchant;
 use App\Models\InternalTransaction;
@@ -35,115 +38,25 @@ class ReconcileController extends Controller
             $BoEndDate = date('Y-m-d', strtotime($splitDate[0]));
 
             $BsSplitDate = explode(' - ', $request->bo_date);
-            $BsStartDate = date('d/m/Y', strtotime($BsSplitDate[0]));
-            $BsEndDate = date('d/m/Y', strtotime($BsSplitDate[1]));
+            $BsStartDate = date('Y-d-m', strtotime($BsSplitDate[0]));
+            $BsEndDate = date('Y-d-m', strtotime($BsSplitDate[1]));
         }
-        DB::beginTransaction();
+
+        $channel = Channel::where('channel', $request->bank)->first();
+        $parameter = BankParameter::where('channel_id', $channel->id)->first();
+        
+
+        $reconResult = false;
         try {
-            $boData = InternalBatch::selectRaw('
-                    SUM(transaction_count) as transaction_count,
-                    SUM(bank_transfer) as bank_transfer,
-                    SUM(fee_mdr_merchant) as fee_mdr_merchant,
-                    SUM(fee_bank_merchant) as fee_bank_merchant,
-                    SUM(tax_payment) as tax_payment,
-                    SUM(transaction_amount) as transaction_amount,
-                    SUM(total_sales_amount) as total_sales_amount,
-                    merchant_id,
-                    mid,
-                    DATE(created_at) as created_date
-                ')
-                ->where(DB::raw('DATE(created_at)'), '>=', $BoStartDate)
-                ->where(DB::raw('DATE(created_at)'), '<=', $BoEndDate)
-                ->where('processor', $request->bank)
-                ->where('bank_id', 5)
-                ->where('status', 'SUCCESSFUL')
-                ->groupBy('mid', 'merchant_id', 'created_date')
-                ->get();
-
-            foreach ($boData as $key => $value) {
-
-                $modMid = substr($value->mid, 5);
-                $bsData = UploadBankDetail::selectRaw('
-                        SUM(amount_credit) as amount_credit,
-                        mid, token_applicant
-                    ')
-                    ->with('header')
-                    ->whereHas('header', function ($query) use ($request) {
-                        $query->where('processor', $request->bank);
-                    })
-                    ->where('mid', 'like', '%' . $modMid . '%')
-                    ->where('type_code', '001')
-                    ->where('is_reconcile', false)
-                    ->groupBy('mid', 'token_applicant')->first();
-
-                if ($bsData) {
-                    $bankSettlement = $bsData->amount_credit;
-                    $token_applicant = $bsData->header->token_applicant;
-                } else {
-                    $bankSettlement = 0;
-                    $token_applicant = null;
-                }
-
-                $trxCount = $value->transaction_count;
-                // $boSettlement = round((int)$value->bank_transfer);
-                $boSettlement = Utils::customRound($value->bank_transfer);
-
-                // dd($boSettlement, $select->bank_payment);
-
-                $feeMdrMerchant = $value->fee_mdr_merchant;
-                $feeBankMerchant = $value->fee_bank_merchant;
-                $taxPayment = $value->tax_payment;
-                // $totalSales = $value->bank_transfer + $value->fee_bank_merchant;
-                $totalSales = $value->total_sales_amount;
-
-                $merchant_id = $value->merchant_id;
-                $sumTransaction = $value->transaction_amount;
-
-                $merchantPayment = Utils::calculateMerchantPayment($boSettlement, $feeMdrMerchant, $feeBankMerchant, $taxPayment); // tanya mas tri
-
-                $rounded_value = round((int)$bankSettlement);
-                $amount_credit = number_format($rounded_value, 0, '', '');
-
-                $diff = abs((float)$boSettlement - (float)$bankSettlement);
-                $treshold = Utils::calculateTreshold($trxCount);
-                $status = Utils::getStatusReconcile($treshold, $boSettlement, $bankSettlement);
-
-                $reconcile = ReconcileResult::create([
-                    'token_applicant' => $token_applicant,
-                    'statement_id' => $bsData ? $bsData->id : null,
-                    'request_id' => $bsData ? $bsData->header->id : null,
-                    'status' => $status,
-                    // 'tid' => $tid,
-                    'mid' => $value->mid,
-                    // 'batch_fk' => $batch_fk, 
-                    'trx_counts' => $trxCount, // total transaksi 1 batch
-                    'total_sales' => $totalSales, // sum transaction_amout di internal_taransaction 
-                    'processor_payment' => $request->bank,
-                    'internal_payment' => $boSettlement, // bank_payment
-                    'merchant_payment' => $merchantPayment, // bank_payment - merchant_fee_amount
-                    'merchant_id' => $merchant_id,
-                    'transfer_amount' => $sumTransaction, // transaction_amount di internal_batch
-                    'bank_settlement_amount' => $amount_credit, // bank_settlement
-                    'dispute_amount' => $diff, // dispute_amount
-                    // 'tax_payment',
-                    // 'fee_mdr_merchant',
-                    // 'fee_bank_merchant',
-                    // 'bank_transfer',
-                    'created_by' => 'System',
-                    'modified_by' => null,
-                    'settlement_date' => $value->created_date
-                ]);
-                if ($token_applicant) {
-                    $uploadBank = UploadBank::where('token_applicant', $token_applicant)->update([
-                        'is_reconcile' => true
-                    ]);
-                }
+            if ($parameter->bo_summary == 'mid' && $parameter->bank_statement == 'mid') {
+                $reconResult = Reconcile::midBoBank($BoStartDate, $BoEndDate, $request->bank, $BsStartDate, $BsEndDate);
             }
 
-            DB::commit();
+            if (!$reconResult) {
+                return  response()->json(['message' => 'Error while reconcile, try again', 'status' => false], 200);
+            }
             return  response()->json(['message' => 'Successfully reconcile data!', 'status' => true], 200);
         } catch (\Throwable $th) {
-            DB::rollBack();
             return  response()->json(['message' => 'Error while reconcile, try again', 'status' => false], 200);
         }
     }
@@ -562,7 +475,7 @@ class ReconcileController extends Controller
                 ->where('status', 'SUCCESSFUL')
                 ->groupBy('mid', 'merchant_id', 'created_date')
                 ->get();
-    
+
             foreach ($boData as $key => $value) {
                 $modMid = substr($value->mid, 5);
                 $bsData = UploadBankDetail::selectRaw('
@@ -579,32 +492,32 @@ class ReconcileController extends Controller
                     ->where('type_code', '001')
                     ->where('is_reconcile', false)
                     ->groupBy('mid', 'token_applicant')->first();
-    
+
                 if ($bsData) {
                     dd($bsData);
                     $bankSettlement = $bsData->amount_credit;
                     $token_applicant = $bsData->header->token_applicant;
-    
+
                     $trxCount = $value->transaction_count;
                     $boSettlement = Utils::customRound($value->bank_transfer);
-    
+
                     $feeMdrMerchant = $value->fee_mdr_merchant;
                     $feeBankMerchant = $value->fee_bank_merchant;
                     $taxPayment = $value->tax_payment;
                     $totalSales = $value->total_sales_amount;
-    
+
                     $merchant_id = $value->merchant_id;
                     $sumTransaction = $value->transaction_amount;
-    
+
                     $merchantPayment = Utils::calculateMerchantPayment($boSettlement, $feeMdrMerchant, $feeBankMerchant, $taxPayment); // tanya mas tri
-    
+
                     $rounded_value = round((int)$bankSettlement);
                     $amount_credit = number_format($rounded_value, 0, '', '');
-    
+
                     $diff = abs((float)$boSettlement - (float)$bankSettlement);
                     $treshold = Utils::calculateTreshold($trxCount);
                     $status = Utils::getStatusReconcile($treshold, $boSettlement, $bankSettlement);
-    
+
                     $reconcile = ReconcileResult::create([
                         'token_applicant' => $token_applicant,
                         'statement_id' => $bsData ? $bsData->id : null,
@@ -637,6 +550,5 @@ class ReconcileController extends Controller
             DB::rollBack();
             return  response()->json(['message' => 'Error while reconcile, try again', 'status' => false], 200);
         }
-
     }
 }

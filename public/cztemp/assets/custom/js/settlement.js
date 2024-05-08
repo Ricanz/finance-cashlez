@@ -27,10 +27,10 @@ var KTDatatablesServerSide = (function () {
                 { data: "start_date" },
                 { data: "processor" },
                 { data: "url" },
-                { data: "credit_total" },
-                { data: "credit_sum" },
                 { data: "debit_total" },
                 { data: "debit_sum" },
+                { data: "credit_total" },
+                { data: "credit_sum" },
                 { data: "token_applicant" },
             ],
             columnDefs: [
@@ -185,7 +185,7 @@ var KTDatatablesServerSide = (function () {
                     .find("td:eq(4)")
                     .attr("data-filter", data.name);
             },
-        }).withIndexColumn();
+        })
 
         dt.on("draw", function () {
             KTMenu.createInstances();
@@ -274,6 +274,9 @@ function reconcile(token) {
 var uploadedFile = null;
 var fileUrl = null;
 
+var uploadedFilePartner = null;
+var fileUrlPartner = null;
+
 var myDropzone = new Dropzone("#kt_dropzonejs_example_1", {
     url: "/api/file/check",
     paramName: "file",
@@ -294,6 +297,38 @@ var myDropzone = new Dropzone("#kt_dropzonejs_example_1", {
     }
 });
 
+var myDropzone = new Dropzone("#kt_dropzonejs_example_2", {
+    url: "/api/file/check",
+    paramName: "file",
+    maxFiles: 1,
+    maxFilesize: 10,
+    addRemoveLinks: true,
+    accept: function(file, done) {
+        uploadedFilePartner = file; // Store the uploaded file
+        done();
+    },
+    success: function(file, response) {
+        if (response.success) {
+            fileUrlPartner = response.data
+            console.log("File berhasil diunggah:", file);
+        } else {
+            console.error("Gagal mengunggah file:", response.message);
+        }
+    }
+});
+
+
+function addPartnerReport() {
+    var checkbox = document.getElementById(`partnerReport`);
+    var dropzonePartner = document.getElementById(`dropzonePartnerReport`);
+    if (checkbox.checked) {
+        dropzonePartner.style.display = 'block';
+    } else {
+        dropzonePartner.style.display = 'none';
+        uploadedFilePartner = null;
+        fileUrlPartner = null;
+    }
+}
 
 $("#store_settlement_form").on("submit", function(event) {
     event.preventDefault();
@@ -301,6 +336,8 @@ $("#store_settlement_form").on("submit", function(event) {
     var formData = new FormData(this);
     formData.append('file', uploadedFile);  
     formData.append('url', fileUrl);  
+    formData.append('filePartner', uploadedFilePartner);  
+    formData.append('urlPartner', fileUrlPartner);  
     $.ajax({
         headers: {
             'X-CSRF-TOKEN': token

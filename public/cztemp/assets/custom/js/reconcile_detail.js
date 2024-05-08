@@ -54,11 +54,11 @@ var KTDatatablesServerSideBO = (function () {
                 {
                     targets: 1,
                     orderable: true,
-                    className: "text-start w-50px",
-                    width: "50px",
+                    className: "text-start w-100px",
+                    width: "100px",
                     render: function (data, type, row, meta) {
                         return ` 
-                            <div class="text-bold fs-7">${data}</div>
+                            <div class="text-bold fs-7">${to_date(data)}</div>
                         `;
                     },
                 },
@@ -77,8 +77,8 @@ var KTDatatablesServerSideBO = (function () {
                 {
                     targets: 3,
                     orderable: true,
-                    className: "text-start w-50px",
-                    width: "50px",
+                    className: "text-start w-200px",
+                    width: "200px",
                     render: function (data, type, row) {
                         return ` 
                             <div class="text-bold fs-7">${data}</div>

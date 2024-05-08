@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class InternalTransaction extends Model
 {
     protected $fillable = [
-        'settelment_date',
+        'batch_id',
+        'settlement_date',
         'retrieval_number',
         'transaction_amount',
         'bank_payment',
@@ -18,6 +19,7 @@ class InternalTransaction extends Model
         'merchant_fee_amount',
         'tax_amount',
         'transaction_type',
+        'merchant_payment',
         'status',
         'comparator_code'
     ];

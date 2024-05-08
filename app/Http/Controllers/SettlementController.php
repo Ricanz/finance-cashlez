@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Bank;
+use App\Models\Channel;
 use App\Models\InternalBatch;
 use App\Models\InternalMerchant;
 use App\Models\InternalTransaction;
@@ -21,7 +22,7 @@ class SettlementController extends Controller
 {
     public function index()
     {
-        $banks = Bank::where('status', 'active')->get();
+        $banks = Channel::where('status', 'active')->get();
         return view('modules.settlement.index', compact('banks'));
     }
 
@@ -88,13 +89,13 @@ class SettlementController extends Controller
                 }
 
                 foreach ($mappedData as $key => $value) {
-                    $credit_amount = (float)str_replace(',', '', $value['credit_amount']);
-                    $debit_amount = (float)str_replace(',', '', $value['debit_amount']);
+                    $credit_amount = (float)str_replace('.', '', $value['credit_amount']);
+                    $debit_amount = (float)str_replace('.', '', $value['debit_amount']);
                     
                     UploadBankDetail::create([
                         'token_applicant' => $upload->token_applicant,
                         'account_no' => isset($value['account_number']) ? $value['account_number'] : '',
-                        'transfer_date' => $value['date'],
+                        'transfer_date' => Carbon::createFromFormat('d/m/y', $value['date']),
                         'description2' => $value['channel'],
                         'description1' => $value['description'],
                         'type_code' => strtolower(str_replace(' ','',$value['description'])) === 'pbyrnmerchant' ? '001' : '002',
@@ -105,10 +106,12 @@ class SettlementController extends Controller
                         'modified_by' => $user->name
                     ]);
                 }
+
+                if ($request->hasFile('filePartner')) {
+                }
                 DB::commit();
                 return  response()->json(['message' => 'Successfully upload data!', 'status' => true], 200);
             } catch (\Throwable $th) {
-                dd($th);
                 DB::rollBack();
                 return  response()->json(['message' => 'Error while uploading, try again', 'status' => false], 200);
             }
