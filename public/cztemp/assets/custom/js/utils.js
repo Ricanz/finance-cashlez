@@ -19,8 +19,26 @@ function to_date(date) {
 }
 
 function to_rupiah(nominal) {
-    var reverse = nominal.toString().split('').reverse().join(''),
-        ribuan = reverse.match(/\d{1,3}/g);
-    ribuan = ribuan.join(',').split('').reverse().join('');
-    return `Rp. ${ribuan}`;
+    var parts = nominal.toString().split('.');
+
+    var reverseInteger = parts[0].split('').reverse().join('');
+    var ribuan = reverseInteger.match(/\d{1,3}/g).join(',').split('').reverse().join('');
+
+    var result = `Rp. ${ribuan}`;
+    if (parts.length > 1) {
+        result += '.' + parts[1];
+    }
+
+    return result;
+}
+
+function getTokenFromUrl(regex){
+    var currentURL = window.location.href;
+
+    var tokenRegex = regex;
+
+    var match = currentURL.match(tokenRegex);
+    var token = match ? match[1] : null;
+
+    return token
 }

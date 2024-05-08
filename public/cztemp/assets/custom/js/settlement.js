@@ -25,14 +25,13 @@ var KTDatatablesServerSide = (function () {
                 { data: "id" },
                 { data: "created_at" },
                 { data: "start_date" },
-                { data: "end_date" },
                 { data: "processor" },
                 { data: "url" },
                 { data: "credit_total" },
                 { data: "credit_sum" },
                 { data: "debit_total" },
                 { data: "debit_sum" },
-                { data: "created_by" },
+                { data: "token_applicant" },
             ],
             columnDefs: [
                 {
@@ -50,7 +49,10 @@ var KTDatatablesServerSide = (function () {
                     className: "text-start",
                     width: "120px",
                     render: function (data, type, row) {
-                        return to_date(data);
+                        return ` 
+                            <div class="text-bold fs-7 text-uppercase">${to_date(data)}</div>
+                            <div class="text-bold fs-7">Upload By : ${row.created_by}</div>
+                        `;
                     },
                 },
                 {
@@ -59,61 +61,89 @@ var KTDatatablesServerSide = (function () {
                     className: "text-start",
                     width: "300px",
                     render: function (data, type, row) {
-                        return to_date(data);
+                        return ` 
+                            <div class="text-bold fs-7">Start : ${to_date(data)}</div>
+                            <div class="text-bold fs-7">End : ${to_date(row.end_date)}</div>
+                        `;
                     },
                 },
                 {
                     targets: 3,
                     orderable: true,
-                    className: "text-start",
-                    width: "300px",
+                    className: "text-center",
+                    width: "100px",
                     render: function (data, type, row) {
-                        return to_date(data);
+                        return ` 
+                            <div class="text-bold fs-7">${data}</div>
+                        `;
                     },
                 },
                 {
-                    targets: 6,
+                    targets: 4,
                     orderable: true,
                     className: "text-center",
-                    width: "30px",
+                    width: "100px",
                     render: function (data, type, row) {
-                        return data;
-                    },
-                },
-                {
-                    targets: 7,
-                    orderable: true,
-                    className: "text-start",
-                    width: "150px",
-                    render: function (data, type, row) {
-                        return to_rupiah(data);
-                    },
-                },
-                {
-                    targets: 8,
-                    orderable: true,
-                    className: "text-center",
-                    width: "30px",
-                    render: function (data, type, row) {
-                        return data;
-                    },
-                },
-                {
-                    targets: 9,
-                    orderable: true,
-                    className: "text-start",
-                    width: "150px",
-                    render: function (data, type, row) {
-                        return to_rupiah(data);
+                        return `<a href='${data}' class="text-bold fs-7">Dowload File</a>`;
                     },
                 },
                 {
                     targets: 5,
                     orderable: true,
                     className: "text-center",
-                    width: "100px",
+                    width: "30px",
                     render: function (data, type, row) {
-                        return `<a href='${data}'>Dowload File</a>`;
+                        return ` 
+                            <div class="text-bold fs-7">${data}</div>
+                        `;
+                    },
+                },
+                {
+                    targets: 6,
+                    orderable: true,
+                    className: "text-start",
+                    width: "150px",
+                    render: function (data, type, row) {
+                        return ` 
+                            <div class="text-bold fs-7">${to_rupiah(Math.round(data))}</div>
+                        `;
+                    },
+                },
+                {
+                    targets: 7,
+                    orderable: true,
+                    className: "text-center",
+                    width: "30px",
+                    render: function (data, type, row) {
+                        return ` 
+                            <div class="text-bold fs-7">${data}</div>
+                        `;
+                    },
+                },
+                {
+                    targets: 8,
+                    orderable: true,
+                    className: "text-start",
+                    width: "150px",
+                    render: function (data, type, row) {
+                        return ` 
+                            <div class="text-bold fs-7">${to_rupiah(Math.round(data))}</div>
+                        `;
+                    },
+                },
+                {
+                    targets: -1,
+                    orderable: false,
+                    className: "text-center",
+                    width: "200px",
+                    render: function (data, type, row) {
+                        return `
+                            <div class="d-flex">
+                                <a href="/reconcile/detail/${data}" class="btn btn-success btn-active-light-success btn-sm rounded-sm">
+                                    View Detail
+                                </a>
+                            </div>
+                        `;
                     },
                 },
                 // {
