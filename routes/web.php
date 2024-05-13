@@ -26,6 +26,7 @@ Route::get('/', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/job', [GeneralController::class, 'job'])->name('job');
+// Route::get('/bank', [GeneralController::class, 'migrateBank'])->name('migrateBank');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

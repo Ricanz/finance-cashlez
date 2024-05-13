@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use App\Models\Applicant;
+use App\Models\Channel;
 use App\Models\DokumenApplicant;
 use App\Models\HistoryApproval;
 use App\Models\MasterPrivilege;
@@ -118,5 +119,17 @@ class Utils
         } else {
             return floor($number);
         }
+    }
+
+    public static function getChannelBankId($text)
+    {
+        $bankId = Channel::where('channel', $text)->pluck('bank_id')->first();
+        return $bankId;
+    }
+
+    public static function getChannel($bankId)
+    {
+        $channel = Channel::where('bank_id', $bankId)->pluck('channel')->first();
+        return $channel;
     }
 }

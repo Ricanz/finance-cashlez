@@ -12,6 +12,7 @@ class Channel extends Model
     protected $fillable = [
         'bank_id',
         'channel',
+        'bank_reference',
         'status',
         'created_by'
     ];

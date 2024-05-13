@@ -42,14 +42,14 @@ class ReconcileController extends Controller
             $BsEndDate = date('Y-d-m', strtotime($BsSplitDate[1]));
         }
 
-        $channel = Channel::where('channel', $request->bank)->first();
-        $parameter = BankParameter::where('channel_id', $channel->id)->first();
-        
+        // $channel = Channel::where('channel', $request->bank)->first();
+        $bankId = Utils::getChannelBankId($request->bank);
+        $parameter = BankParameter::where('channel_id', $bankId)->first();
 
         $reconResult = false;
         try {
             if ($parameter->bo_summary == 'mid' && $parameter->bank_statement == 'mid') {
-                $reconResult = Reconcile::midBoBank($BoStartDate, $BoEndDate, $request->bank, $BsStartDate, $BsEndDate);
+                $reconResult = Reconcile::midBoBank($BoStartDate, $BoEndDate, $bankId, $BsStartDate, $BsEndDate);
             }
 
             if (!$reconResult) {

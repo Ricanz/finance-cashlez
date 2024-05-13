@@ -16,10 +16,10 @@ return new class extends Migration
         Schema::create('bank_parameters', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('channel_id');
-            $table->boolean('report_partner')->default(false);
-            $table->boolean('bo_detail_transaction')->default(false);
-            $table->boolean('bo_summary')->default(false);
-            $table->boolean('bank_statement')->default(false);
+            $table->boolean('report_partner');
+            $table->boolean('bo_detail_transaction');
+            $table->boolean('bo_summary');
+            $table->boolean('bank_statement');
             $table->timestamps();
         });
     }

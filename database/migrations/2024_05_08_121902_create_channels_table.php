@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->bigInteger('bank_id');
             $table->string('channel')->nullable();
+            $table->string('bank_reference')->nullable();
             $table->string('status')->default('active');
             $table->string('created_by')->nullable();
             $table->timestamps();

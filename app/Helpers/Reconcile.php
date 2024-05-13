@@ -12,6 +12,8 @@ class Reconcile
 {
     public static function midBoBank($BoStartDate, $BoEndDate, $channel, $BsStartDate, $BsEndDate)
     {
+        $channelName = Utils::getChannel($channel);
+
         DB::beginTransaction();
         try {
             $boData = InternalBatch::selectRaw('
@@ -28,7 +30,7 @@ class Reconcile
                 ')
                 ->where(DB::raw('DATE(created_at)'), '>=', $BoStartDate)
                 ->where(DB::raw('DATE(created_at)'), '<=', $BoEndDate)
-                ->where('bank_id', 5)
+                ->where('bank_id', $channel)
                 ->where('status', 'SUCCESSFUL')
                 ->groupBy('mid', 'merchant_id', 'created_date')
                 ->get();
@@ -42,7 +44,7 @@ class Reconcile
                     ')
                     ->with('header')
                     ->where('mid', 'like', '%' . $modMid . '%')
-                    ->where('description2', $channel)
+                    ->where('description2', $channelName)
                     ->where('type_code', '001')
                     ->where('is_reconcile', false)
                     ->where(DB::raw('DATE(transfer_date)'), '>=', $BsStartDate)
@@ -88,7 +90,7 @@ class Reconcile
                     // 'batch_fk' => $batch_fk, 
                     'trx_counts' => $trxCount, // total transaksi 1 batch
                     'total_sales' => $totalSales, // sum transaction_amout di internal_taransaction 
-                    'processor_payment' => $channel,
+                    'processor_payment' => $channelName,
                     'internal_payment' => $boSettlement, // bank_payment
                     'merchant_payment' => $merchantPayment, // bank_payment - merchant_fee_amount
                     'merchant_id' => $merchant_id,
@@ -107,6 +109,14 @@ class Reconcile
                     $uploadBank = UploadBank::where('token_applicant', $token_applicant)->update([
                         'is_reconcile' => true
                     ]);
+                    $bankDetail = UploadBankDetail::where('mid', 'like', '%' . $modMid . '%')
+                        ->where('description2', $channelName)
+                        ->where('type_code', '001')
+                        ->where(DB::raw('DATE(transfer_date)'), '>=', $BsStartDate)
+                        ->where(DB::raw('DATE(transfer_date)'), '<=', $BsEndDate)
+                        ->update([
+                                'is_reconcile' => $status == 'MATCH' ? true : false
+                            ]);
                 }
             }
             DB::commit();
@@ -116,4 +126,5 @@ class Reconcile
             return false;
         }
     }
+
 }
