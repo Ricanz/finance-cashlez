@@ -38,7 +38,7 @@
             <div class="menu menu-column menu-title-gray-800 menu-state-title-primary menu-state-icon-primary menu-state-bullet-primary menu-arrow-gray-500"
                 id="#kt_aside_menu" data-kt-menu="true">
                 <div class="menu-item">
-                    <a class="menu-link {{ request()->segment(1) == '' ? 'active' : '' }}" href="/">
+                    <a class="menu-link {{ request()->segment(1) == '' ? 'active' : '' }}" href="{{ url('') }}">
                         <span class="menu-icon">
                             <i class="bi bi-grid fs-3"></i>
                         </span>
@@ -53,7 +53,7 @@
                     </div>
                     <div class="menu-item">
                         <a class="menu-link {{ Str::startsWith(request()->path(), 'users') ? 'active' : '' }}"
-                            href="/users">
+                            href="{{ url('users') }}">
                             <span class="menu-icon">
                                 <i class="bi bi-person fs-2"></i>
                             </span>
@@ -62,7 +62,7 @@
                     </div>
                     <div class="menu-item">
                         <a class="menu-link {{ Str::startsWith(request()->path(), 'roles') ? 'active' : '' }}"
-                            href="/roles">
+                            href="{{ url('roles') }}">
                             <span class="menu-icon">
                                 <i class="bi bi-window fs-3"></i>
                             </span>
@@ -84,7 +84,7 @@
                     </div>
                     <div class="menu-item">
                         <a class="menu-link {{ Str::startsWith(request()->path(), 'banks') ? 'active' : '' }}"
-                            href="/banks">
+                            href="{{ url('banks') }}">
                             <span class="menu-icon">
                                 <i class="bi bi-layers fs-3"></i>
                             </span>
@@ -99,7 +99,7 @@
                 </div>
                 <div class="menu-item">
                     <a class="menu-link {{ Str::startsWith(request()->path(), 'settlement') ? 'active' : '' }}"
-                        href="/settlement">
+                        href="{{ url('settlement') }}">
                         <span class="menu-icon">
                             <i class="bi bi-archive fs-3"></i>
                         </span>
@@ -131,7 +131,7 @@
                         @if ($priv->read)
                             <div class="menu-item">
                                 <a class="menu-link {{ request()->is('reconcile/result') ? 'active' : '' }}"
-                                    href="/reconcile/result">
+                                    href="{{ url('reconcile/result') }}">
                                     <span class="menu-bullet">
                                         <span class="bullet bullet-dot"></span>
                                     </span>
@@ -143,7 +143,7 @@
                 </div>
                 @if ($privDis->read)
                     <div class="menu-item">
-                        <a class="menu-link" href="/disbursement">
+                        <a class="menu-link" href="{{ url('disbursement') }}">
                             <span class="menu-icon">
                                 <i class="bi bi-sticky fs-3"></i>
                             </span>
