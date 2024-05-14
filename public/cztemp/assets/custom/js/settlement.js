@@ -25,7 +25,7 @@ var KTDatatablesServerSide = (function () {
                 { data: "id" },
                 { data: "created_at" },
                 { data: "start_date" },
-                { data: "processor" },
+                { data: "channel.channel" },
                 { data: "url" },
                 { data: "debit_total" },
                 { data: "debit_sum" },

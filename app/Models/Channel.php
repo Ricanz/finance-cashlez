@@ -16,4 +16,9 @@ class Channel extends Model
         'status',
         'created_by'
     ];
+
+    public function parameter()
+    {
+        return $this->hasOne(BankParameter::class, 'channel_id', 'bank_id');
+    }
 }

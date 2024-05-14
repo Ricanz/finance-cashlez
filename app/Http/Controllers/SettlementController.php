@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Bank;
+use App\Models\BankParameter;
 use App\Models\Channel;
 use App\Models\InternalBatch;
 use App\Models\InternalMerchant;
@@ -22,13 +23,17 @@ class SettlementController extends Controller
 {
     public function index()
     {
-        $banks = Channel::where('status', 'active')->get();
+        $banks = Channel::with('parameter')
+                ->where('status', 'active')
+                ->whereHas('parameter')
+                ->get();
         return view('modules.settlement.index', compact('banks'));
     }
 
     public function data()
     {
-        $query = UploadBank::with('detail')->get();
+        // $query = UploadBank::with('detail', 'channel')->get();
+        $query = UploadBank::with('channel')->get();
         $query->transform(function ($upload) {
                 $upload->credit_total = UploadBankDetail::where('token_applicant', $upload->token_applicant)->where('amount_credit', '>', 0)->count();
                 $upload->debit_total = UploadBankDetail::where('token_applicant', $upload->token_applicant)->where('amount_debit', '>', 0)->count();
@@ -98,7 +103,7 @@ class SettlementController extends Controller
                         'transfer_date' => Carbon::createFromFormat('d/m/y', $value['date']),
                         'description2' => $value['channel'],
                         'description1' => $value['description'],
-                        'type_code' => strtolower(str_replace(' ','',$value['description'])) === 'pbyrnmerchant' ? '001' : '002',
+                        'type_code' => $credit_amount > 0 ? '001' : '002',
                         'amount_debit' => $debit_amount,
                         'amount_credit' => $credit_amount,
                         'mid' => $value['mid'], 

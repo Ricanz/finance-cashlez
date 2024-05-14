@@ -44,11 +44,11 @@
                                 title="Name of the bank"></i>
                         </label>
                         <!--end::Label-->
-                        <select name="bank" aria-label="Select a Channel" data-control="select2"
+                        <select name="bank" aria-label="Select a Channel" data-control="select1"
                             data-placeholder="Select a Channel..." class="form-select form-select-solid fw-bolder">
                             <option value="">Select a Channel...</option>
                             @foreach ($banks as $item)
-                                <option value="{{ $item->id }}">{{ $item->channel }}</option>
+                                <option value="{{ $item->bank_id }}">{{ $item->channel }}</option>
                             @endforeach
                         </select>
                     </div>

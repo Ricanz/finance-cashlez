@@ -38,8 +38,8 @@ class ReconcileController extends Controller
             $BoEndDate = date('Y-m-d', strtotime($splitDate[0]));
 
             $BsSplitDate = explode(' - ', $request->bo_date);
-            $BsStartDate = date('Y-d-m', strtotime($BsSplitDate[0]));
-            $BsEndDate = date('Y-d-m', strtotime($BsSplitDate[1]));
+            $BsStartDate = date('Y-m-d', strtotime($BsSplitDate[0]));
+            $BsEndDate = date('Y-m-d', strtotime($BsSplitDate[1]));
         }
 
         // $channel = Channel::where('channel', $request->bank)->first();
@@ -50,6 +50,8 @@ class ReconcileController extends Controller
         try {
             if ($parameter->bo_summary == 'mid' && $parameter->bank_statement == 'mid') {
                 $reconResult = Reconcile::midBoBank($BoStartDate, $BoEndDate, $bankId, $BsStartDate, $BsEndDate);
+            } else if($parameter->bo_summary == 'vlookup' && $parameter->bank_statement == 'vlookup'){
+                $reconResult = Reconcile::vlookupBoBank($BoStartDate, $BoEndDate, $bankId, $BsStartDate, $BsEndDate);
             }
 
             if (!$reconResult) {

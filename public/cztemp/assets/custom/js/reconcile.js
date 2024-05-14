@@ -87,14 +87,17 @@ var KTDatatablesServerSide = (function () {
                     className: "text-center",
                     width: "50px",
                     render: function (data, type, row) {
-                        return `
-                            <div class="d-flex justify-content-center mb-1">
-                            ${data}
-                            </div>
-                            <div class="d-flex justify-content-end">
-                                <a href="#" class="btn btn-sm btn-light-primary me-3 rounded-sm" data-bs-toggle="modal" data-bs-target="#kt_modal_new_target" onclick="mrcDetail('${row.token_applicant}')">${row.merchant.reference_code}</a>
-                            </div>
-                        `;
+                        if (data) {
+                            return `
+                                <div class="d-flex justify-content-center mb-1">
+                                ${data}
+                                </div>
+                                <div class="d-flex justify-content-end">
+                                    <a href="#" class="btn btn-sm btn-light-primary me-3 rounded-sm" data-bs-toggle="modal" data-bs-target="#kt_modal_new_target" onclick="mrcDetail('${row.token_applicant}')">${row.merchant ? row.merchant.reference_code : ''}</a>
+                                </div>
+                            `;
+                            
+                        }
                     },
                 },
                 {

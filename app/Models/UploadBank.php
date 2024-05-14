@@ -29,6 +29,11 @@ class UploadBank extends Model
     {
         return $this->hasMany(UploadBankDetail::class, 'token_applicant', 'token_applicant');
     }
+
+    public function channel()
+    {
+        return $this->belongsTo(Channel::class, 'processor', 'bank_id');
+    }
     
     // public function transactionTotal()
     // {
