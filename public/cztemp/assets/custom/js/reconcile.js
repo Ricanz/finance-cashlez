@@ -51,17 +51,17 @@ var KTDatatablesServerSide = (function () {
                 { data: "settlement_date" },
                 // { data: "batch_fk" },
                 { data: "processor_payment" },
-                { data: "mid" },
-                { data: "merchant.name" },
+                { data: "id" },
+                { data: "id" },
                 { data: "status" },
                 { data: "internal_payment" },
                 { data: "bank_settlement_amount" },
                 { data: "dispute_amount" },
                 { data: "transfer_amount" },
-                { data: "bank_account.account_number" },
-                { data: "bank_account.bank_code" },
-                { data: "bank_account.bank_name" },
-                { data: "bank_account.account_holder" },
+                { data: "id" },
+                { data: "id" },
+                { data: "id" },
+                { data: "id" },
             ],
             columnDefs: [
                 {
@@ -89,16 +89,18 @@ var KTDatatablesServerSide = (function () {
                     className: "text-center",
                     width: "50px",
                     render: function (data, type, row) {
-                        if (data) {
+                        if (row.mid) {
                             return `
                                 <div class="d-flex justify-content-center mb-1">
-                                ${data}
+                                ${row.mid}
                                 </div>
                                 <div class="d-flex justify-content-end">
                                     <a href="#" class="btn btn-sm btn-light-primary me-3 rounded-sm" data-bs-toggle="modal" data-bs-target="#kt_modal_new_target" onclick="mrcDetail('${row.token_applicant}')">${row.merchant ? row.merchant.reference_code : ''}</a>
                                 </div>
                             `;
                             
+                        } else {
+                            return 'VLOOKUP';
                         }
                     },
                 },
@@ -108,7 +110,11 @@ var KTDatatablesServerSide = (function () {
                     className: "text-center",
                     width: "30px",
                     render: function (data, type, row) {
-                        return data;
+                        if (row.merchant) {
+                            return row.merchant.name;
+                        } else {
+                            return 'VLOOKUP'
+                        }
                     },
                 },
                 {
@@ -168,6 +174,58 @@ var KTDatatablesServerSide = (function () {
                     width: "150px",
                     render: function (data, type, row) {
                         return to_rupiah(data);
+                    },
+                },
+                {
+                    targets: 10,
+                    orderable: true,
+                    className: "text-center",
+                    width: "30px",
+                    render: function (data, type, row) {
+                        if (row.bank_account) {
+                            return row.bank_account.account_number;
+                        } else {
+                            return 'VLOOKUP'
+                        }
+                    },
+                },
+                {
+                    targets: 11,
+                    orderable: true,
+                    className: "text-center",
+                    width: "30px",
+                    render: function (data, type, row) {
+                        if (row.bank_account) {
+                            return row.bank_account.bank_code;
+                        } else {
+                            return 'VLOOKUP'
+                        }
+                    },
+                },
+                {
+                    targets: 12,
+                    orderable: true,
+                    className: "text-center",
+                    width: "30px",
+                    render: function (data, type, row) {
+                        if (row.bank_account) {
+                            return row.bank_account.bank_name;
+                        } else {
+                            return 'VLOOKUP'
+                        }
+                    },
+                },
+                {
+                    targets: 13,
+                    orderable: true,
+                    className: "text-center",
+                    width: "30px",
+                    render: function (data, type, row) {
+                        if (row.bank_account) {
+                            return row.bank_account.account_holder;
+                        } else {
+                            return 'VLOOKUP'
+                        }
                     },
                 },
             ],

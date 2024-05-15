@@ -6,6 +6,8 @@ use App\Models\InternalBatch;
 use App\Models\ReconcileResult;
 use App\Models\UploadBank;
 use App\Models\UploadBankDetail;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class Reconcile
@@ -162,7 +164,6 @@ class Reconcile
                 $merchantPayment = 0;
 
             foreach ($boData as $key => $value) {
-                dd($value->created_date);
                 $bsData = UploadBankDetail::selectRaw('
                         SUM(amount_credit) as amount_credit
                     ')
@@ -200,6 +201,10 @@ class Reconcile
                 $diff = abs((float)$boSettlement - (float)$bankSettlement);
                 $treshold = Utils::calculateTreshold($trxCount);
                 $status = Utils::getStatusReconcile($treshold, $boSettlement, $bankSettlement);
+
+                $settlementDate = Carbon::createFromFormat('Y-m-d', $value->created_date);
+                // $settlementDate = $value->created_date;
+                // dd($settlementDate);
     
                 $reconcile = ReconcileResult::create([
                     'token_applicant' => $token_applicant,
@@ -222,9 +227,9 @@ class Reconcile
                     // 'fee_mdr_merchant',
                     // 'fee_bank_merchant',
                     // 'bank_transfer',
-                    'created_by' => 'System',
+                    'created_by' => Auth::user()->name,
                     'modified_by' => null,
-                    'settlement_date' => $value->created_date
+                    'settlement_date' => $settlementDate
                 ]);
                 if ($token_applicant) {
                     $uploadBank = UploadBank::where('token_applicant', $token_applicant)->update([
