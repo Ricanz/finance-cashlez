@@ -117,7 +117,7 @@
                     </span>
                     <div class="menu-sub menu-sub-accordion">
                         <div class="menu-item">
-                            <a class="menu-link {{ request()->is('reconcile') ? 'active' : '' }}" href="/reconcile">
+                            <a class="menu-link {{ request()->is('reconcile') ? 'active' : '' }}" href="{{ url('reconcile') }}">
                                 <span class="menu-bullet">
                                     <span class="bullet bullet-dot"></span>
                                 </span>
