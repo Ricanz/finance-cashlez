@@ -9,7 +9,7 @@ var KTDatatablesServerSideBO = (function () {
     var dt;
     var token = getTokenFromUrl(regex);
     
-    var url = `/reconcile/detail/data/${token}`;
+    var url = `${baseUrl}/reconcile/detail/data/${token}`;
 
     var initDatatable = function () {
         dt = $("#bank_statement_detail_table").DataTable({
@@ -235,7 +235,7 @@ $("#store_reconcile_form").on("submit", function(event) {
         },
         type: 'POST',
         data: formData,
-        url: '/reconcile/channel',
+        url: baseUrl + '/reconcile/channel',
         dataType: 'JSON',
         cache: false,
         contentType: false,
@@ -255,7 +255,7 @@ $("#store_reconcile_form").on("submit", function(event) {
                         confirmButton: "btn font-weight-bold btn-light-primary"
                     }
                 }).then(function() {
-                    location.href = "/reconcile/result";
+                    location.href = baseUrl + "/reconcile/result";
                 });
             } else {
                 var values = '';

@@ -18,7 +18,7 @@ var KTDatatablesServerSide = (function () {
         status = `status=${parUstatus}`
     }
 
-    url = `reconcile/data?${uuid}&${status}`
+    url = `${baseUrl}/reconcile/data?${uuid}&${status}`
 
     var initDatatable = function () {
         dt = $("#kt_datatable_example_1").DataTable({
@@ -189,7 +189,7 @@ var KTDatatablesServerSide = (function () {
 
 function mrcDetail(tokenApplicant) {
     $.ajax({
-        url: "/mrc/" + tokenApplicant + "/detail",
+        url: baseUrl + "/mrc/" + tokenApplicant + "/detail",
         type: "GET",
         success: function (response) {
             console.log(response);

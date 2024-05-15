@@ -22,7 +22,7 @@ var KTDatatablesServerSide = (function () {
         status = `status=${parUstatus}`;
     }
 
-    url = `reconcile/data?${uuid}&${status}`;
+    url = `${baseUrl}/reconcile/data?${uuid}&${status}`;
 
     var initDatatable = function () {
         dt = $("#kt_datatable_example_1").DataTable({
@@ -247,13 +247,13 @@ $("#download_reconcile_form").on("submit", function (event) {
     var endDateParts = endDateString.split("/");
     var formattedEndDate = endDateParts[2] + "-" + endDateParts[0].padStart(2, '0') + "-" + endDateParts[1].padStart(2, '0');
 
-    return window.location.href = `/reconcile/download?bank=${bank}&status=${status}&startDate=${formattedStartDate}&endDate=${formattedEndDate}`
+    return window.location.href = `${baseUrl}/reconcile/download?bank=${bank}&status=${status}&startDate=${formattedStartDate}&endDate=${formattedEndDate}`
 
 });
 
 function mrcDetail(tokenApplicant) {
     $.ajax({
-        url: "/mrc/" + tokenApplicant + "/detail",
+        url: baseUrl + "/mrc/" + tokenApplicant + "/detail",
         type: "GET",
         success: function (response) {
             console.log(response);

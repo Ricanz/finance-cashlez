@@ -6,7 +6,7 @@ var KTDatatablesServerSide = (function () {
     var endDate = "";
     var selectedBank = "";
 
-    var url = `settlement/bank/data`;
+    var url = `${baseUrl}/settlement/bank/data`;
 
     var initDatatable = function () {
         dt = $("#bank_settlement_table").DataTable({
@@ -176,7 +176,7 @@ var KTDatatablesServerSideBO = (function () {
     var startDate = "";
     var endDate = "";
     var selectedBank = "";
-    var url = `/settlement/bo/data`;
+    var url = `${baseUrl}/settlement/bo/data`;
 
     var initDatatable = function () {
         dt = $("#bo_settlement_table").DataTable({
@@ -377,7 +377,7 @@ $("#singleReconcile").on("submit", function (event) {
         headers: { 'X-CSRF-TOKEN': token },
         type : 'POST',
         data: formData,
-        url  : '/reconcile/single',
+        url  : baseUrl + '/reconcile/single',
         dataType: 'JSON',
         cache: false,
         contentType: false,
@@ -397,7 +397,7 @@ $("#singleReconcile").on("submit", function (event) {
                         confirmButton: "btn font-weight-bold btn-light-primary"
                     }
                 }).then(function() {
-                    location.href = "/reconcile/result";
+                    location.href = baseUrl + "/reconcile/result";
                 });
             }else {
                 var values = '';
