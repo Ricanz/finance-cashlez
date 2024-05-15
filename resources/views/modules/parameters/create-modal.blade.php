@@ -41,7 +41,7 @@
                             <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip" title="Name of the bank"></i>
                         </label>
                         <!--end::Label-->
-                        <select name="bank_id" aria-label="Select a Channel" data-control="select2"
+                        <select name="bank_id" aria-label="Select a Channel"
                             data-placeholder="Select a Channel..." class="form-select form-select-solid fw-bolder">
                             <option value="">Select a Channel...</option>
                             @foreach ($channel as $item)
@@ -54,7 +54,7 @@
                         <label class="required fs-6 fw-bold mb-2">Report Partner</label>
                         <!--end::Label-->
                         <!--begin::Input-->
-                        <select name="report_partner" aria-label="Select a Parameter" data-control="select2"
+                        <select name="report_partner" aria-label="Select a Parameter"
                             data-placeholder="Select a Parameter..." class="form-select form-select-solid fw-bolder">
                             <option value="">Select a Parameter...</option>
                             @foreach ($params as $item)
@@ -68,7 +68,7 @@
                         <label class="required fs-6 fw-bold mb-2">BO Detail Transaction</label>
                         <!--end::Label-->
                         <!--begin::Input-->
-                        <select name="bo_detail_transaction" aria-label="Select a Parameter" data-control="select2"
+                        <select name="bo_detail_transaction" aria-label="Select a Parameter"
                             data-placeholder="Select a Parameter..." class="form-select form-select-solid fw-bolder">
                             <option value="">Select a Parameter...</option>
                             @foreach ($params as $item)
@@ -82,7 +82,7 @@
                         <label class="required fs-6 fw-bold mb-2">BO Summary</label>
                         <!--end::Label-->
                         <!--begin::Input-->
-                        <select name="bo_summary" aria-label="Select a Parameter" data-control="select2"
+                        <select name="bo_summary" aria-label="Select a Parameter"
                             data-placeholder="Select a Parameter..." class="form-select form-select-solid fw-bolder">
                             <option value="">Select a Parameter...</option>
                             @foreach ($params as $item)
@@ -96,7 +96,7 @@
                         <label class="required fs-6 fw-bold mb-2">Bank Statement</label>
                         <!--end::Label-->
                         <!--begin::Input-->
-                        <select name="bank_statement" aria-label="Select a Parameter" data-control="select2"
+                        <select name="bank_statement" aria-label="Select a Parameter"
                             data-placeholder="Select a Parameter..." class="form-select form-select-solid fw-bolder">
                             <option value="">Select a Parameter...</option>
                             @foreach ($params as $item)
