@@ -16,7 +16,7 @@ var KTDatatablesServerSide = (function () {
                 className: "row-selected",
             },
             ajax: {
-                url: "/banks/data",
+                url: baseUrl + "/banks/data",
             },
             columns: [
                 { data: "name" },
