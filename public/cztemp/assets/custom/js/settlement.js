@@ -19,7 +19,7 @@ var KTDatatablesServerSide = (function () {
                 className: "row-selected",
             },
             ajax: {
-                url: "/settlement/data",
+                url: `${baseUrl}/settlement/data`,
             },
             columns: [
                 { data: "id" },
@@ -139,7 +139,7 @@ var KTDatatablesServerSide = (function () {
                     render: function (data, type, row) {
                         return `
                             <div class="d-flex">
-                                <a href="/reconcile/detail/${data}" class="btn btn-success btn-active-light-success btn-sm rounded-sm">
+                                <a href="${baseUrl}/reconcile/detail/${data}" class="btn btn-success btn-active-light-success btn-sm rounded-sm">
                                     View Detail
                                 </a>
                             </div>
@@ -225,7 +225,7 @@ function reconcile(token) {
         swal.showLoading();
         if (result.value) {
             $.ajax({
-                url: "/reconcile/" + token + '/proceed',
+                url: baseUrl + "/reconcile/" + token + '/proceed',
                 type: "GET",
                 beforeSend: function() {
                     swal.showLoading();
@@ -278,7 +278,7 @@ var uploadedFilePartner = null;
 var fileUrlPartner = null;
 
 var myDropzone = new Dropzone("#kt_dropzonejs_example_1", {
-    url: "/api/file/check",
+    url: baseUrl + "/api/file/check",
     paramName: "file",
     maxFiles: 1,
     maxFilesize: 10,
@@ -298,7 +298,7 @@ var myDropzone = new Dropzone("#kt_dropzonejs_example_1", {
 });
 
 var myDropzone = new Dropzone("#kt_dropzonejs_example_2", {
-    url: "/api/file/check",
+    url: baseUrl + "/api/file/check",
     paramName: "file",
     maxFiles: 1,
     maxFilesize: 10,
@@ -344,7 +344,7 @@ $("#store_settlement_form").on("submit", function(event) {
         },
         type: 'POST',
         data: formData,
-        url: '/settlement',
+        url: `${baseUrl}/settlement`,
         dataType: 'JSON',
         cache: false,
         contentType: false,
@@ -364,7 +364,7 @@ $("#store_settlement_form").on("submit", function(event) {
                         confirmButton: "btn font-weight-bold btn-light-primary"
                     }
                 }).then(function() {
-                    location.href = "/settlement";
+                    location.href = baseUrl + "/settlement";
                 });
             } else {
                 var values = '';
@@ -397,7 +397,7 @@ $("#store_reconcile_form").on("submit", function(event) {
         },
         type: 'POST',
         data: formData,
-        url: '/reconcile',
+        url: `${baseUrl}/reconcile`,
         dataType: 'JSON',
         cache: false,
         contentType: false,
@@ -417,7 +417,7 @@ $("#store_reconcile_form").on("submit", function(event) {
                         confirmButton: "btn font-weight-bold btn-light-primary"
                     }
                 }).then(function() {
-                    location.href = "/reconcile/result";
+                    location.href = baseUrl + "/reconcile/result";
                 });
             } else {
                 var values = '';
