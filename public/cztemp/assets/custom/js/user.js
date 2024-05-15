@@ -16,7 +16,7 @@ var KTDatatablesServerSide = (function () {
                 className: "row-selected",
             },
             ajax: {
-                url: "/users/data",
+                url: baseUrl + "/users/data",
             },
             columns: [
                 { data: "name" },
@@ -55,7 +55,7 @@ var KTDatatablesServerSide = (function () {
                             <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-bold fs-7 w-125px py-4" data-kt-menu="true">
                                 <!--begin::Menu item-->
                                 <div class="menu-item px-3">
-                                    <a href="/users/edit/${row.uuid}" class="menu-link px-3" data-kt-docs-table-filter="edit_row">
+                                    <a href="${baseUrl}/users/edit/${row.uuid}" class="menu-link px-3" data-kt-docs-table-filter="edit_row">
                                         Edit
                                     </a>
                                 </div>
@@ -131,7 +131,7 @@ function deleteRow($token) {
     }).then(function (result) {
         if (result.value) {
             $.ajax({
-                url: "/users/destroy/" + $token,
+                url: baseUrl + "/users/destroy/" + $token,
                 type: "GET",
                 success: function (response) {
                     Swal.fire({
@@ -181,7 +181,7 @@ $("#update_user_form").on("submit", function (event) {
         headers: { 'X-CSRF-TOKEN': token },
         type : 'POST',
         data: formData,
-        url  : '/users/update',
+        url  : baseUrl + '/users/update',
         dataType: 'JSON',
         cache: false,
         contentType: false,
@@ -201,7 +201,7 @@ $("#update_user_form").on("submit", function (event) {
                         confirmButton: "btn font-weight-bold btn-light-primary"
                     }
                 }).then(function() {
-                    location.href = "/users";
+                    location.href = baseUrl + "/users";
                 });
             }else {
                 var values = '';
