@@ -88,7 +88,16 @@
                             <span class="menu-icon">
                                 <i class="bi bi-layers fs-3"></i>
                             </span>
-                            <span class="menu-title">Bank</span>
+                            <span class="menu-title">Channel</span>
+                        </a>
+                    </div>
+                    <div class="menu-item">
+                        <a class="menu-link {{ Str::startsWith(request()->path(), 'parameters') ? 'active' : '' }}"
+                            href="{{ url('parameters') }}">
+                            <span class="menu-icon">
+                                <i class="bi bi-layers fs-3"></i>
+                            </span>
+                            <span class="menu-title">Parameter</span>
                         </a>
                     </div>
                 @endif

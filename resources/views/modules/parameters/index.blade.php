@@ -27,9 +27,9 @@
                 <!--end::Search-->
 
                 <!--begin::Toolbar-->
-                {{-- <div class="d-flex justify-content-end" data-kt-docs-table-toolbar="base">
+                <div class="d-flex justify-content-end" data-kt-docs-table-toolbar="base">
                     <a href="#" class="btn btn-light-primary me-3 rounded-sm" data-bs-toggle="modal" data-bs-target="#kt_modal_new_target">Add New Record</a>
-                </div> --}}
+                </div>
                 <!--end::Toolbar-->
 
             </div>
@@ -39,10 +39,12 @@
             <table id="kt_datatable_example_1" class="table align-middle table-row-dashed fs-6 gy-5">
                 <thead>
                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                        <th>Bank Name</th>
-                        <th>Status</th>
+                        <th>Channel</th>
+                        <th>Report Partner</th>
+                        <th>BO Detail Transaction</th>
+                        <th>BO Summary</th>
+                        <th>Bank Statement</th>
                         <th>Created By</th>
-                        <th>Created Date</th>
                         <th>Modified Date</th>
                         <th class="text-end min-w-100px">Actions</th>
                     </tr>
@@ -53,8 +55,8 @@
             <!--end::Datatable-->
         </div>
     </div>
-    @include('/modules/banks/create-modal')
+    @include('/modules/parameters/create-modal')
     @section('scripts')
-        <script src="{{ asset('cztemp/assets/custom/js/bank.js') }}"></script>
+        <script src="{{ asset('cztemp/assets/custom/js/parameter.js') }}"></script>
     @endsection
 </x-app-layout>

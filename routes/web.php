@@ -3,6 +3,7 @@
 use App\Http\Controllers\BankController;
 use App\Http\Controllers\DisbursementController;
 use App\Http\Controllers\GeneralController;
+use App\Http\Controllers\ParameterController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SettlementController;
@@ -56,6 +57,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/banks/edit/{id}', [BankController::class, 'edit'])->name('bank.edit');
     Route::post('/banks/update', [BankController::class, 'update'])->name('bank.update');
     Route::get('/banks/destroy/{id}', [BankController::class, 'destroy'])->name('bank.destroy');
+
+    // Parameters
+    Route::get('/parameters', [ParameterController::class, 'index'])->name('parameter.index');
+    Route::get('/parameters/data', [ParameterController::class, 'data'])->name('parameter.data');
+    Route::get('/parameters/edit/{id}', [ParameterController::class, 'edit'])->name('parameter.edit');
+    Route::post('/parameters/update', [ParameterController::class, 'update'])->name('parameter.update');
+    Route::post('/parameters/store', [ParameterController::class, 'store'])->name('parameter.store');
+
+
 
     // Settlement
     Route::get('/settlement', [SettlementController::class, 'index'])->name('settlement.index');

@@ -15,6 +15,7 @@ class BankParameter extends Model
         'bo_detail_transaction',
         'bo_summary',
         'bank_statement',
+        'created_by',
         'created_at',
         'updated_at'
     ];

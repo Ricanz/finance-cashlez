@@ -8,7 +8,7 @@ var KTDatatablesServerSide = (function () {
             searchDelay: 200,
             processing: true,
             serverSide: true,
-            order: [[3, "desc"]],
+            order: [[1, "desc"]],
             stateSave: true,
             select: {
                 style: "os",
@@ -16,13 +16,15 @@ var KTDatatablesServerSide = (function () {
                 className: "row-selected",
             },
             ajax: {
-                url: baseUrl + "/banks/data",
+                url: baseUrl + "/parameters/data",
             },
             columns: [
                 { data: "channel" },
-                { data: "status" },
+                { data: "parameter.report_partner" },
+                { data: "parameter.bo_detail_transaction" },
+                { data: "parameter.bo_summary" },
+                { data: "parameter.bank_statement" },
                 { data: "created_by" },
-                { data: "created_at" },
                 { data: "updated_at" },
                 { data: "id" },
             ],
@@ -55,11 +57,11 @@ var KTDatatablesServerSide = (function () {
                             <!--begin::Menu-->
                             <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-bold fs-7 w-125px py-4" data-kt-menu="true">
                                 <!--begin::Menu item-->
-                                <!--<div class="menu-item px-3">
-                                    <a href="/banks/edit/${row.id}" class="menu-link px-3" data-kt-docs-table-filter="edit_row">
+                                <div class="menu-item px-3">
+                                    <a href="${baseUrl}/parameters/edit/${row.id}" class="menu-link px-3" data-kt-docs-table-filter="edit_row">
                                         Edit
                                     </a>
-                                </div>-->
+                                </div>
                                 <!--end::Menu item-->
 
                                 <!--begin::Menu item-->
@@ -76,14 +78,6 @@ var KTDatatablesServerSide = (function () {
                 },
                 {
                     targets: -2,
-                    orderable: true,
-                    className: "text-start",
-                    render: function (data, type, row) {
-                        return to_date_time(data);
-                    },
-                },
-                {
-                    targets: -3,
                     orderable: true,
                     className: "text-start",
                     render: function (data, type, row) {
@@ -189,7 +183,7 @@ $("#update_role_form").on("submit", function (event) {
         headers: { 'X-CSRF-TOKEN': token },
         type : 'POST',
         data: formData,
-        url  : baseUrl + '/banks/update',
+        url  : baseUrl + '/parameters/update',
         dataType: 'JSON',
         cache: false,
         contentType: false,
@@ -209,7 +203,7 @@ $("#update_role_form").on("submit", function (event) {
                         confirmButton: "btn font-weight-bold btn-light-primary"
                     }
                 }).then(function() {
-                    location.href = baseUrl + "/banks";
+                    location.href = baseUrl + "/parameters";
                 });
             }else {
                 var values = '';
@@ -240,7 +234,7 @@ $("#store_bank_form").on("submit", function (event) {
         headers: { 'X-CSRF-TOKEN': token },
         type : 'POST',
         data: formData,
-        url  : baseUrl + '/banks/store',
+        url  : baseUrl + '/parameters/store',
         dataType: 'JSON',
         cache: false,
         contentType: false,
@@ -260,7 +254,7 @@ $("#store_bank_form").on("submit", function (event) {
                         confirmButton: "btn font-weight-bold btn-light-primary"
                     }
                 }).then(function() {
-                    location.href = baseUrl + "/banks";
+                    location.href = baseUrl + "/parameters";
                 });
             }else {
                 var values = '';

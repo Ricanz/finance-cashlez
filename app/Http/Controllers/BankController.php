@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Bank;
+use App\Models\Channel;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -61,7 +62,7 @@ class BankController extends Controller
      */
     public function edit($id)
     {
-        $data = Bank::where('id', $id)->first();
+        $data = Channel::where('id', $id)->first();
         return view('modules.banks.edit', compact('data'));
     }
 
@@ -114,7 +115,7 @@ class BankController extends Controller
      }
  
      public function data(Request $request) {
-         $query = Bank::where('status', '!=', 'deleted')->orderBy('name');
+         $query = Channel::where('status', '!=', 'deleted')->orderBy('channel');
 
          return DataTables::of($query->get())->addIndexColumn()->make(true);
      }
