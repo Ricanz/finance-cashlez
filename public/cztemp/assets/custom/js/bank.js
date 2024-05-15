@@ -141,7 +141,7 @@ function deleteRow($id) {
     }).then(function (result) {
         if (result.value) {
             $.ajax({
-                url: "/banks/destroy/" + $id,
+                url: baseUrl + "/banks/destroy/" + $id,
                 type: "GET",
                 success: function (response) {
                     Swal.fire({
@@ -190,7 +190,7 @@ $("#update_role_form").on("submit", function (event) {
         headers: { 'X-CSRF-TOKEN': token },
         type : 'POST',
         data: formData,
-        url  : '/banks/update',
+        url  : baseUrl + '/banks/update',
         dataType: 'JSON',
         cache: false,
         contentType: false,
@@ -210,7 +210,7 @@ $("#update_role_form").on("submit", function (event) {
                         confirmButton: "btn font-weight-bold btn-light-primary"
                     }
                 }).then(function() {
-                    location.href = "/banks";
+                    location.href = baseUrl + "/banks";
                 });
             }else {
                 var values = '';
@@ -241,7 +241,7 @@ $("#store_bank_form").on("submit", function (event) {
         headers: { 'X-CSRF-TOKEN': token },
         type : 'POST',
         data: formData,
-        url  : '/banks/store',
+        url  : baseUrl + '/banks/store',
         dataType: 'JSON',
         cache: false,
         contentType: false,
@@ -261,7 +261,7 @@ $("#store_bank_form").on("submit", function (event) {
                         confirmButton: "btn font-weight-bold btn-light-primary"
                     }
                 }).then(function() {
-                    location.href = "/banks";
+                    location.href = baseUrl + "/banks";
                 });
             }else {
                 var values = '';
