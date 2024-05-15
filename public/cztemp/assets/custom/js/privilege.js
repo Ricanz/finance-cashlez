@@ -92,7 +92,7 @@ var KTUsersUpdatePermissions = (function () {
 
                                 // Make AJAX request
                                 $.ajax({
-                                    url: "/privilege/update",
+                                    url: baseUrl + "/privilege/update",
                                     type: "POST",
                                     data: formData,
                                     processData: false,
@@ -117,7 +117,7 @@ var KTUsersUpdatePermissions = (function () {
                                         }).then(function (t) {
                                             if (t.isConfirmed) {
                                                 // n.hide();
-                                                window.location.href = '/roles'
+                                                window.location.href = baseUrl + '/roles'
                                             }
                                         });
                                     },
@@ -189,7 +189,7 @@ function privilegeDetail(slug) {
     tbody.appendChild(row);
 
     $.ajax({
-        url: "/role/detail/" + slug,
+        url: baseUrl + "/role/detail/" + slug,
         type: "GET",
         success: function (response) {
             var data = response.data;

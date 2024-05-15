@@ -16,7 +16,7 @@ var KTDatatablesServerSide = (function () {
                 className: "row-selected",
             },
             ajax: {
-                url: "/roles/data",
+                url: baseUrl + "/roles/data",
             },
             columns: [
                 { data: "title" },
@@ -57,7 +57,7 @@ var KTDatatablesServerSide = (function () {
                             <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-bold fs-7 w-125px py-4" data-kt-menu="true">
                                 <!--begin::Menu item-->
                                 <div class="menu-item px-3">
-                                    <a href="/roles/edit/${row.id}" class="menu-link px-3" data-kt-docs-table-filter="edit_row">
+                                    <a href="${baseUrl}/roles/edit/${row.id}" class="menu-link px-3" data-kt-docs-table-filter="edit_row">
                                         Edit
                                     </a>
                                 </div>
@@ -141,7 +141,7 @@ function deleteRow($id) {
     }).then(function (result) {
         if (result.value) {
             $.ajax({
-                url: "/roles/destroy/" + $id,
+                url: baseUrl + "/roles/destroy/" + $id,
                 type: "GET",
                 success: function (response) {
                     Swal.fire({
@@ -190,7 +190,7 @@ $("#update_role_form").on("submit", function (event) {
         headers: { 'X-CSRF-TOKEN': token },
         type : 'POST',
         data: formData,
-        url  : '/roles/update',
+        url  : baseUrl + '/roles/update',
         dataType: 'JSON',
         cache: false,
         contentType: false,
@@ -210,7 +210,7 @@ $("#update_role_form").on("submit", function (event) {
                         confirmButton: "btn font-weight-bold btn-light-primary"
                     }
                 }).then(function() {
-                    location.href = "/roles";
+                    location.href = baseUrl + "/roles";
                 });
             }else {
                 var values = '';
