@@ -26,7 +26,10 @@ class ReconcileController extends Controller
 {
     public function index()
     {
-        $banks = Bank::where('status', 'active')->get();
+        $banks = Channel::with('parameter')
+                ->where('status', 'active')
+                ->whereHas('parameter')
+                ->get();
         return view('modules.reconcile.index', compact('banks'));
     }
 
@@ -185,7 +188,11 @@ class ReconcileController extends Controller
         $sumDispute = $query5->whereIn('status', ['NOT_MATCH', 'NOT_FOUND'])->sum('total_sales');
         $sumHold = $query6->where('status', 'ON_HOLD')->sum('total_sales');
 
-        $banks = Bank::where('status', 'active')->get();
+        // $banks = Bank::where('status', 'active')->get();
+        $banks = Channel::with('parameter')
+                ->where('status', 'active')
+                ->whereHas('parameter')
+                ->get();
 
         return view('modules.reconcile.show', compact('banks', 'match', 'dispute', 'onHold', 'sumMatch', 'sumDispute', 'sumHold'));
     }
@@ -248,6 +255,10 @@ class ReconcileController extends Controller
                 ->whereDate('settlement_date', '<=', $endDate);
         }
 
+        if ($request->input('channel') !== null) {
+            $query->where('processor_payment', $request->channel);
+        }
+
         return DataTables::of($query->get())->addIndexColumn()->make(true);
     }
 
@@ -255,7 +266,7 @@ class ReconcileController extends Controller
     {
         $token_applicant = request()->query('token');
         $status = request()->query('status');
-        $bank = request()->query('bank');
+        $channel = request()->query('bank');
 
         $startDate = request()->query('startDate');
         $endDate = request()->query('endDate');
@@ -266,9 +277,9 @@ class ReconcileController extends Controller
             $text = $status;
         }
 
-        $filename = $bank . '-' . $startDate . '-to-' . $endDate . '-' . $text;
+        $filename = $channel . '-' . $startDate . '-to-' . $endDate . '-' . $text;
 
-        return Excel::download(new ReconcileExport($token_applicant, $status, $startDate, $endDate), 'reconcile-' . $filename . '.xlsx');
+        return Excel::download(new ReconcileExport($token_applicant, $status, $startDate, $endDate, $channel), 'reconcile-' . $filename . '.xlsx');
     }
 
     public function mrcDetail($token_applicant)

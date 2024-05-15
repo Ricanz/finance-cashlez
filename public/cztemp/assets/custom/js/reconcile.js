@@ -9,6 +9,7 @@ var KTDatatablesServerSide = (function () {
     var status = "";
     var startDate = "";
     var endDate = "";
+    var channel = "";
     const queryParams = new URLSearchParams(window.location.search);
 
     var parUuid = queryParams.get("token");
@@ -42,6 +43,7 @@ var KTDatatablesServerSide = (function () {
                 data: function (d) {
                     d.startDate = startDate;
                     d.endDate = endDate;
+                    d.channel = channel
                 },
             },
             columns: [
@@ -208,15 +210,30 @@ var KTDatatablesServerSide = (function () {
         );
     };
 
+    var handleChannelSearch = function () {
+        const selectChannel = document.getElementById("channelId");
+        selectChannel.addEventListener("change", function (e) {
+            channel = e.target.value
+            reloadDatatable();
+        });
+    };
+
     var handleRefreshTable = function () {
         const refreshButton = document.getElementById("refreshButton");
         const searchTable = document.getElementById("searchTable");
+        const selectChannel = document.getElementById("channelId");
+
         refreshButton.addEventListener("click", function (e) {
+            startDate = null;
+            endDate = null;
+            channel = "";
             searchTable.value = "";
+            selectChannel.value = "";
             dt.search("").draw();
             reloadDatatable();
         });
     };
+
 
     return {
         init: function () {
@@ -225,6 +242,7 @@ var KTDatatablesServerSide = (function () {
             reloadDatatable();
             initDateRangePicker();
             handleRefreshTable();
+            handleChannelSearch();
         },
     };
 })();
@@ -295,6 +313,10 @@ function mrcDetail(tokenApplicant) {
             });
         },
     });
+}
+
+function selectChannel(){
+
 }
 
 $(document).ready(function () {

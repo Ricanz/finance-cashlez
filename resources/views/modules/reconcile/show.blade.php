@@ -113,6 +113,16 @@
                                 class="form-control form-control-solid w-250px ps-14 rounded-sm ms-2"
                                 placeholder="Search Merchant" />
                         </div>
+                        <div class="d-flex align-items-center position-relative my-1 mx-4">
+                            <select name="channel"
+                                data-placeholder="Select a Channel..." class="w-250px form-select form-select-solid fw-bolder rounded-sm" id="channelId">
+                                <option value="">Select a Channel...</option>
+                                @foreach ($banks as $item)
+                                    <option value="{{ $item->channel }}">{{ $item->channel }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
                     </div>
                     <!--end::Search-->
                 </div>

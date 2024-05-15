@@ -48,7 +48,7 @@
                             data-placeholder="Select a Bank..." class="form-select form-select-solid fw-bolder" id="bankInput">
                             <option value="">Select a Bank...</option>
                             @foreach ($banks as $item)
-                                <option value="{{ $item->name }}">{{ $item->name }}</option>
+                                <option value="{{ $item->channel }}">{{ $item->channel }}</option>
                             @endforeach
                         </select>
                     </div>
