@@ -55,6 +55,8 @@ class ReconcileController extends Controller
                 $reconResult = Reconcile::midBoBank($BoStartDate, $BoEndDate, $bankId, $BsStartDate, $BsEndDate);
             } else if($parameter->bo_summary == 'vlookup' && $parameter->bank_statement == 'vlookup'){
                 $reconResult = Reconcile::vlookupBoBank($BoStartDate, $BoEndDate, $bankId, $BsStartDate, $BsEndDate);
+            } else {
+                return  response()->json(['message' => 'Reconcile Parameter is not setting yet.', 'status' => false], 200);
             }
 
             if (!$reconResult) {
