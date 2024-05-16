@@ -56,15 +56,15 @@ class ReconcileController extends Controller
             } else if($parameter->bo_summary == 'vlookup' && $parameter->bank_statement == 'vlookup'){
                 $reconResult = Reconcile::vlookupBoBank($BoStartDate, $BoEndDate, $bankId, $BsStartDate, $BsEndDate);
             } else {
-                return  response()->json(['message' => 'Reconcile Parameter is not setting yet.', 'status' => false], 200);
+                return  response()->json(['message' => ['Reconcile Parameter is not setting yet.'], 'status' => false], 200);
             }
 
             if (!$reconResult) {
-                return  response()->json(['message' => 'Error while reconcile, try again', 'status' => false], 200);
+                return  response()->json(['message' => ['Error while reconcile, try again'], 'status' => false], 200);
             }
-            return  response()->json(['message' => 'Successfully reconcile data!', 'status' => true], 200);
+            return  response()->json(['message' => ['Successfully reconcile data!'], 'status' => true], 200);
         } catch (\Throwable $th) {
-            return  response()->json(['message' => 'Error while reconcile, try again', 'status' => false], 200);
+            return  response()->json(['message' => ['Error while reconcile, try again'], 'status' => false], 200);
         }
     }
 
