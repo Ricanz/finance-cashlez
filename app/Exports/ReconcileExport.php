@@ -43,6 +43,7 @@ class ReconcileExport implements FromCollection, WithHeadings, WithMapping
         $query->where(DB::raw('DATE(settlement_date)'), '>=', $this->startDate);
         $query->where(DB::raw('DATE(settlement_date)'), '<=', $this->endDate);
         $query->where('processor_payment', $this->channel);
+        $query->where('status', '!=', 'deleted');
 
         return $query->get();
     }

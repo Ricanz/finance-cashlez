@@ -27,9 +27,9 @@ class ReconcileController extends Controller
     public function index()
     {
         $banks = Channel::with('parameter')
-                ->where('status', 'active')
-                ->whereHas('parameter')
-                ->get();
+            ->where('status', 'active')
+            ->whereHas('parameter')
+            ->get();
         return view('modules.reconcile.index', compact('banks'));
     }
 
@@ -53,7 +53,7 @@ class ReconcileController extends Controller
         try {
             if ($parameter->bo_summary == 'mid' && $parameter->bank_statement == 'mid') {
                 $reconResult = Reconcile::midBoBank($BoStartDate, $BoEndDate, $bankId, $BsStartDate, $BsEndDate);
-            } else if($parameter->bo_summary == 'vlookup' && $parameter->bank_statement == 'vlookup'){
+            } else if ($parameter->bo_summary == 'vlookup' && $parameter->bank_statement == 'vlookup') {
                 $reconResult = Reconcile::vlookupBoBank($BoStartDate, $BoEndDate, $bankId, $BsStartDate, $BsEndDate);
             } else {
                 return  response()->json(['message' => ['Reconcile Parameter is not setting yet.'], 'status' => false], 200);
@@ -90,6 +90,7 @@ class ReconcileController extends Controller
         $sumTransaction = 0;
         $merchantPayment = 0;
         $bankSettlement = 0;
+        $batchMid = '';
 
 
         foreach ($selectedBo as $key => $value) {
@@ -104,6 +105,7 @@ class ReconcileController extends Controller
             $totalSales = $totalSales + $internalBatch->transaction_amount;
             $merchant_id = $internalBatch->merchant_id;
             $sumTransaction = $sumTransaction + $internalBatch->transaction_amount;
+            $batchMid = $internalBatch->mid;
 
             $merchantPayment = $merchantPayment + Utils::calculateMerchantPayment($boSettlement, $feeMdrMerchant, $feeBankMerchant, $taxPayment);
         }
@@ -129,17 +131,27 @@ class ReconcileController extends Controller
             foreach ($selectedBank as $key => $value) {
                 $det = UploadBankDetail::with('header')->where('id', $value)->first();
                 // $internalBatch = InternalBatch::where('mid', 'like', '%' . $value->mid . '%')->get();
-                $carbonDate = Carbon::createFromFormat('m/d/Y', $det->transfer_date);
-
+                $carbonDate = $det->transfer_date;
+                // dd(date('Y-m-d', $carbonDate));
+                $carbonDateParsed = Carbon::parse($carbonDate);
+                $oldRec = ReconcileResult::where('mid', $batchMid)
+                    ->whereIn('status', ['NOT_MATCH', 'NOT_FOUND'])
+                    ->whereDate('settlement_date', $carbonDateParsed)
+                    ->first();
+                if ($oldRec) {
+                    $oldRec->status = 'deleted';
+                    $oldRec->modified_by = $user->name;
+                    $oldRec->save();
+                }
                 $reconcile = ReconcileResult::create([
                     'token_applicant' => $det->token_applicant,
                     'statement_id' => $det->id,
                     'request_id' => $det->header->id,
                     'status' => $status,
-                    'mid' => $det->mid,
+                    'mid' => $batchMid,
                     'trx_counts' => $trxCount, // total transaksi 1 batch
                     'total_sales' => $totalSales, // sum transaction_amout di internal_taransaction 
-                    'processor_payment' => $det->header->processor,
+                    'processor_payment' => $det->description2,
                     'internal_payment' => $boSettlement, // bank_payment
                     'merchant_payment' => $merchantPayment, // bank_payment - merchant_fee_amount
                     'merchant_id' => $merchant_id,
@@ -147,7 +159,7 @@ class ReconcileController extends Controller
                     'bank_settlement_amount' => $amount_credit, // bank_settlement
                     'dispute_amount' => $diff, // dispute_amount
                     'created_by' => $user->name,
-                    'modified_by' => null,
+                    'modified_by' => $user->name,
                     'settlement_date' => $carbonDate
                 ]);
                 if ($reconcile) {
@@ -192,9 +204,9 @@ class ReconcileController extends Controller
 
         // $banks = Bank::where('status', 'active')->get();
         $banks = Channel::with('parameter')
-                ->where('status', 'active')
-                ->whereHas('parameter')
-                ->get();
+            ->where('status', 'active')
+            ->whereHas('parameter')
+            ->get();
 
         return view('modules.reconcile.show', compact('banks', 'match', 'dispute', 'onHold', 'sumMatch', 'sumDispute', 'sumHold'));
     }
@@ -260,6 +272,8 @@ class ReconcileController extends Controller
         if ($request->input('channel') !== null) {
             $query->where('processor_payment', $request->channel);
         }
+
+        $query->where('status', '!=', 'deleted');
 
         return DataTables::of($query->get())->addIndexColumn()->make(true);
     }

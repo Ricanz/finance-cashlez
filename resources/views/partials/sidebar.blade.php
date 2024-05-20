@@ -130,7 +130,15 @@
                                 <span class="menu-bullet">
                                     <span class="bullet bullet-dot"></span>
                                 </span>
-                                <span class="menu-title">Reconcile</span>
+                                <span class="menu-title">Reconcile Bank Statement</span>
+                            </a>
+                        </div>
+                        <div class="menu-item">
+                            <a class="menu-link {{ request()->is('reconcile/partner') ? 'active' : '' }}" href="{{ url('reconcile/partner') }}">
+                                <span class="menu-bullet">
+                                    <span class="bullet bullet-dot"></span>
+                                </span>
+                                <span class="menu-title">Reconcile Report Partner</span>
                             </a>
                         </div>
                         @php

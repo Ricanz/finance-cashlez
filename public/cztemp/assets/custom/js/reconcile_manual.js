@@ -32,7 +32,7 @@ var KTDatatablesServerSide = (function () {
             columns: [
                 { data: "transfer_date" },
                 { data: "merchant_name" },
-                { data: "header.processor" },
+                { data: "description2" },
                 { data: "mid" },
                 { data: "amount_credit" },
                 { data: "id" },

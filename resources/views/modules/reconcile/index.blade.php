@@ -43,10 +43,10 @@
                     <table id="bank_selected_items" class="table align-middle table-row-dashed fs-6 gy-5">
                         <thead>
                             <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                                <th>Settlement Date</th>
+                                <th>Statement Date</th>
                                 <th>Bank</th>
                                 <th>MID</th>
-                                <th class="text-end">Bank Settlement</th>
+                                <th class="text-end">Bank Statement</th>
                             </tr>
                         </thead>
                         <tbody class="text-gray-600 fw-bold">
@@ -84,7 +84,7 @@
                                 data-placeholder="Select a Bank..." class="form-select form-select-solid fw-bolder">
                                 <option value="">Select a Bank...</option>
                                 @foreach ($banks as $item)
-                                    <option value="{{ $item->name }}">{{ $item->name }}</option>
+                                    <option value="{{ $item->bank_id }}">{{ $item->channel }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -114,7 +114,7 @@
                     </div>
                 </div>
                 <div class="col-xl-6">
-                    <h5 class="fw-bold text-gray-600">BANK Settlement</h5>
+                    <h5 class="fw-bold text-gray-600">BANK Statement</h5>
                     <div class="d-flex mb-2">
                         <div class="mb-0 w-50 me-1">
                             <input class="form-control form-control-solid" placeholder="Pick date rage"
@@ -125,7 +125,7 @@
                                 data-placeholder="Select a Bank..." class="form-select form-select-solid fw-bolder">
                                 <option value="">Select a Bank...</option>
                                 @foreach ($banks as $item)
-                                    <option value="{{ $item->name }}">{{ $item->name }}</option>
+                                    <option value="{{ $item->bank_id }}">{{ $item->channel }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -202,7 +202,7 @@
                 <div class="card card-xl-stretch">
                     <!--begin::Header-->
                     <div class="card-header border-0 bg-danger py-5">
-                        <h3 class="card-title fw-bolder text-white">BANK Settlement</h3>
+                        <h3 class="card-title fw-bolder text-white">BANK Statement</h3>
                     </div>
                     <!--end::Header-->
                     <!--begin::Body-->
@@ -213,7 +213,7 @@
                             <table id="bank_settlement_table" class="table align-middle table-row-dashed fs-6 gy-5">
                                 <thead>
                                     <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
-                                        <th>Settlement Date</th>
+                                        <th>Statement Date</th>
                                         <th>Merchant Name</th>
                                         <th>Bank Type</th>
                                         <th>MID</th>

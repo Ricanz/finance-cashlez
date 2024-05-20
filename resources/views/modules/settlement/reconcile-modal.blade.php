@@ -57,7 +57,7 @@
                         <label class="d-flex align-items-center fs-6 fw-bold mb-2">
                             <span class="required">Back Office Date</span>
                             <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip"
-                                title="Range of Settlement Date"></i>
+                                title="Range of Back Office Date"></i>
                         </label>
                         <!--end::Label-->
                         <div class="mb-0 w-100 me-1">
@@ -69,9 +69,9 @@
                     <div class="d-flex flex-column mb-8 fv-row">
                         <!--begin::Label-->
                         <label class="d-flex align-items-center fs-6 fw-bold mb-2">
-                            <span class="required">Settlement Date</span>
+                            <span class="required">Statement Date</span>
                             <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip"
-                                title="Range of Settlement Date"></i>
+                                title="Range of Statement Date"></i>
                         </label>
                         <!--end::Label-->
                         <div class="mb-0 w-100 me-1">
