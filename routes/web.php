@@ -9,6 +9,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SettlementController;
 use App\Http\Controllers\ReconcileController;
 use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,6 +26,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::get('test', function () {
+    Log::info("test success");
+});
 
 Route::get('/job', [GeneralController::class, 'job'])->name('job');
 // Route::get('/bank', [GeneralController::class, 'migrateBank'])->name('migrateBank');
