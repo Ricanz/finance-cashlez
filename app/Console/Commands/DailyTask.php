@@ -2,24 +2,25 @@
 
 namespace App\Console\Commands;
 
+use App\Helpers\BackOffice;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
-class DemoCron extends Command
+class DailyTask extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'demo:cron';
+    protected $signature = 'daily:task';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Testing Cron Job';
+    protected $description = 'Perform daily tasks from Back Office';
 
     /**
      * Execute the console command.
@@ -28,7 +29,7 @@ class DemoCron extends Command
      */
     public function handle()
     {
-        Log::info("Cron job Berhasil di jalankan " . date('Y-m-d H:i:s'));
+        BackOffice::job();
         return Command::SUCCESS;
     }
 }

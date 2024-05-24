@@ -16,7 +16,11 @@ class GeneralController extends Controller
 {
     public function job()
     {
-        $url = 'https://api.cashlez.com/helper-service/finance-settlement-reconcile-by-date?settlement-date=2024-03-07';
+        $now = Carbon::now();
+        $now->subDay();
+        $yesterdatDate = $now->format('Y-m-d');
+        
+        $url = 'https://api.cashlez.com/helper-service/finance-settlement-reconcile-by-date?settlement-date='.$yesterdatDate;
         $client = new Client([
             'verify' => false,
             'timeout' => 240
@@ -33,7 +37,7 @@ class GeneralController extends Controller
                 $merchantDTO = $value->merchantDTO;
                 $transactionAuthorizedDto = $value->transactionAuthorizedDto;
 
-                $createdAt = Carbon::createFromFormat('Y-m-d', '2024-03-07');
+                $createdAt = Carbon::createFromFormat('Y-m-d', $yesterdatDate);
                 $batch = InternalBatch::create([
                     'batch_fk' => null,
                     'transaction_count' => $batchDto->transactionCount,
