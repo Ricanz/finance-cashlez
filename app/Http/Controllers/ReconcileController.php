@@ -580,4 +580,14 @@ class ReconcileController extends Controller
             return  response()->json(['message' => 'Error while reconcile, try again', 'status' => false], 200);
         }
     }
+
+    public function partner()
+    {
+        $banks = Channel::with('parameter')
+            ->where('status', 'active')
+            ->whereHas('parameter')
+            ->get();
+
+        return view('modules.reconcile.partner.index', compact('banks'));
+    }
 }

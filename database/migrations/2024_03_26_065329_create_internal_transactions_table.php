@@ -15,18 +15,22 @@ return new class extends Migration
     {
         Schema::create('internal_transactions', function (Blueprint $table) {
             $table->id();
-            $table->timestamp('settlement_date');
-            $table->string('retrieval_number');
-            $table->string('transaction_amount');
-            $table->string('bank_payment');
-            $table->string('txid');
-            $table->string('batch_fk');
-            $table->string('bank_fee_amount');
-            $table->string('merchant_fee_amount');
-            $table->string('tax_amount');
-            $table->string('transaction_type');
-            $table->string('status');
-            $table->string('comparator_code');
+            $table->timestamp('settlement_date')->nullable();
+            $table->string('retrieval_number')->nullable();
+            $table->string('transaction_amount')->nullable();
+            $table->string('bank_payment')->nullable();
+            $table->string('txid')->nullable();
+            $table->string('batch_fk')->nullable();
+            $table->string('bank_fee_amount')->nullable();
+            $table->string('merchant_fee_amount')->nullable();
+            $table->string('tax_amount')->nullable();
+            $table->string('transaction_type')->nullable();
+            $table->string('status')->nullable();
+            $table->string('comparator_code')->nullable();
+            $table->string('autn_code')->nullable();
+            $table->string('sid')->nullable();
+            $table->string('ftp_file')->nullable();
+            $table->string('number_va')->nullable();
             $table->timestamps();
         });
     }

@@ -21,4 +21,10 @@ class ReportPartner extends Model
         'net_amount',
         'channel'
     ];
+
+
+    public function header()
+    {
+        return $this->belongsTo(UploadBank::class, 'token_applicant', 'token_applicant');
+    }
 }

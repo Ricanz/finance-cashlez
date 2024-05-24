@@ -26,7 +26,12 @@ class InternalTransaction extends Model
 
     public function header()
     {
-        return $this->belongsTo(InternalBatch::class, 'batch_fk', 'batch_fk');
+        return $this->belongsTo(InternalBatch::class, 'batch_id', 'id');
+    }
+
+    public function channel()
+    {
+        return $this->hasOneThrough(Channel::class, InternalBatch::class, 'id', 'bank_id', 'batch_id', 'bank_id');
     }
 
 

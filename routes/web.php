@@ -72,7 +72,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/settlement/data', [SettlementController::class, 'data'])->name('settlement.data');
     Route::post('/settlement', [SettlementController::class, 'store'])->name('settlement.store');
     Route::get('/settlement/bo/data', [SettlementController::class, 'boSettlement'])->name('settlement.bo');
+    Route::get('/settlement/bo-detail/data', [SettlementController::class, 'boDetailSettlement'])->name('settlement.boDetail');
     Route::get('/settlement/bank/data', [SettlementController::class, 'bankSettlement'])->name('settlement.bank');
+    Route::get('/settlement/partner/data', [SettlementController::class, 'partnerReport'])->name('settlement.partner');
 
 
     // Reconcile
@@ -87,6 +89,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/reconcile/download', [ReconcileController::class, 'download'])->name('reconcile.download');
     Route::post('/reconcile/single', [ReconcileController::class, 'reconcile'])->name('reconcile.single');
     Route::post('/reconcile/channel', [ReconcileController::class, 'channel'])->name('reconcile.channel');
+    Route::get('/reconcile/partner', [ReconcileController::class, 'partner'])->name('reconcile.partner');
+
 
     // Modal Show
     Route::get('/mrc/{token}/detail', [ReconcileController::class, 'mrcDetail'])->name('reconcile.mrcDetail');
