@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('rrn')->nullable();
             $table->string('net_amount')->nullable();
             $table->string('channel')->nullable();
+            $table->boolean('is_reconcile')->default(0);
             $table->timestamps();
         });
     }

@@ -93,8 +93,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/reconcile/detail/data/{token}', [ReconcileController::class, 'detailData'])->name('reconcile.detailData');
     Route::get('/reconcile/download', [ReconcileController::class, 'download'])->name('reconcile.download');
     Route::post('/reconcile/single', [ReconcileController::class, 'reconcile'])->name('reconcile.single');
+
     Route::post('/reconcile/channel', [ReconcileController::class, 'channel'])->name('reconcile.channel');
     Route::get('/reconcile/partner', [ReconcileController::class, 'partner'])->name('reconcile.partner');
+    Route::post('/reconcile/partner', [ReconcileController::class, 'reconcilePartner'])->name('reconcile.reconcilePartner');
 
 
     // Modal Show

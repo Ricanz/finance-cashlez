@@ -12,6 +12,7 @@ use App\Models\InternalBatch;
 use App\Models\InternalMerchant;
 use App\Models\InternalTransaction;
 use App\Models\ReconcileResult;
+use App\Models\ReportPartner;
 use App\Models\UploadBank;
 use App\Models\UploadBankDetail;
 use Carbon\Carbon;
@@ -152,6 +153,112 @@ class ReconcileController extends Controller
                     'trx_counts' => $trxCount, // total transaksi 1 batch
                     'total_sales' => $totalSales, // sum transaction_amout di internal_taransaction 
                     'processor_payment' => $det->description2,
+                    'internal_payment' => $boSettlement, // bank_payment
+                    'merchant_payment' => $merchantPayment, // bank_payment - merchant_fee_amount
+                    'merchant_id' => $merchant_id,
+                    'transfer_amount' => $sumTransaction, // transaction_amount di internal_batch
+                    'bank_settlement_amount' => $amount_credit, // bank_settlement
+                    'dispute_amount' => $diff, // dispute_amount
+                    'created_by' => $user->name,
+                    'modified_by' => $user->name,
+                    'settlement_date' => $carbonDate
+                ]);
+                if ($reconcile) {
+                    $det->is_reconcile = true;
+                    $det->save();
+                }
+                return  response()->json(['message' => 'Successfully Reconcile data!', 'status' => true], 200);
+            }
+            return  response()->json(['message' => ['Failed Reconcile Data!'], 'status' => false], 200);
+        }
+        return  response()->json(['message' => ['Data Not Match!'], 'status' => false], 200);
+    }
+
+    public function reconcilePartner(Request $request)
+    {
+        $user = Auth::user();
+        if (!isset($request->selectedBo)) {
+            return  response()->json(['message' => ["Please select Back Office Settlement!"], 'status' => false], 200);
+        }
+        if (!isset($request->selectedBank)) {
+            return  response()->json(['message' => ["Please select Partner Report!"], 'status' => false], 200);
+        }
+
+        $selectedBo = explode(',', $request->selectedBo);
+        $selectedBank = explode(',', $request->selectedBank);
+
+        $trxCount = 0;
+        $boSettlement = 0;
+        $feeMdrMerchant = 0;
+        $feeBankMerchant = 0;
+        $taxPayment = 0;
+        $totalSales = 0;
+        $sumTransaction = 0;
+        $merchantPayment = 0;
+        $bankSettlement = 0;
+        $batchMid = '';
+
+
+        foreach ($selectedBo as $key => $value) {
+            // $transaction = InternalTransaction::with('header')->where('id', $value)->first();
+            $internalTransaction = InternalTransaction::with('header')->where('id', $value)->first();
+            
+            $trxCount = $trxCount + 1;
+            $boSettlement = $boSettlement + $internalTransaction->bank_payment;
+            $feeMdrMerchant = $feeMdrMerchant + $internalTransaction->merchant_fee_amount;
+            $feeBankMerchant = $feeBankMerchant + $internalTransaction->bank_fee_amount;
+            $taxPayment = $taxPayment + $internalTransaction->tax_amount;
+            $totalSales = $totalSales + $internalTransaction->transaction_amount;
+            $merchant_id = $internalTransaction->header->merchant_id;
+            $sumTransaction = $sumTransaction + $internalTransaction->transaction_amount;
+            $batchMid = $internalTransaction->header->mid;
+
+            $merchantPayment = $merchantPayment + Utils::calculateMerchantPayment($boSettlement, $feeMdrMerchant, $feeBankMerchant, $taxPayment);
+        }
+        
+
+        foreach ($selectedBank as $key => $value) {
+            $bank = ReportPartner::where('id', $value)->first();
+            $bankSettlement = $bankSettlement + (float)$bank->net_amount;
+        }
+
+        $rounded_value = round((int)$bankSettlement);
+        $amount_credit = number_format($rounded_value, 0, '', '');
+
+        $diff = abs((float)$boSettlement - (float)$bankSettlement);
+
+        $treshold = Utils::calculateTreshold($trxCount);
+        $status = Utils::getStatusReconcile($treshold, $boSettlement, $bankSettlement);
+
+        $diff = abs((float)$boSettlement - (float)$bankSettlement);
+
+        if ($status == "MATCH") {
+            foreach ($selectedBank as $key => $value) {
+                $det = ReportPartner::with('header')->where('id', $value)->first();
+                
+                $carbonDate = $det->settlement_date;
+
+                $carbonDateParsed = Carbon::parse($carbonDate);
+                $oldRec = ReconcileResult::where('mid', $batchMid)
+                    ->whereIn('status', ['NOT_MATCH', 'NOT_FOUND'])
+                    ->whereDate('settlement_date', $carbonDateParsed)
+                    ->first();
+                    
+                if ($oldRec) {
+                    $oldRec->status = 'deleted';
+                    $oldRec->modified_by = $user->name;
+                    $oldRec->save();
+                }
+
+                $reconcile = ReconcileResult::create([
+                    'token_applicant' => $det->token_applicant,
+                    'statement_id' => $det->id,
+                    'request_id' => $det->header->id,
+                    'status' => $status,
+                    'mid' => $batchMid,
+                    'trx_counts' => $trxCount, // total transaksi 1 batch
+                    'total_sales' => $totalSales, // sum transaction_amout di internal_taransaction 
+                    'processor_payment' => $det->channel,
                     'internal_payment' => $boSettlement, // bank_payment
                     'merchant_payment' => $merchantPayment, // bank_payment - merchant_fee_amount
                     'merchant_id' => $merchant_id,

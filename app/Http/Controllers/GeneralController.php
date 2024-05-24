@@ -15,12 +15,8 @@ use Illuminate\Support\Facades\DB;
 class GeneralController extends Controller
 {
     public function job()
-    {
-        $now = Carbon::now();
-        $now->subDay();
-        $yesterdatDate = $now->format('Y-m-d');
-        
-        $url = 'https://api.cashlez.com/helper-service/finance-settlement-reconcile-by-date?settlement-date='.$yesterdatDate;
+    {   
+        $url = 'https://api.cashlez.com/helper-service/finance-settlement-reconcile-by-date?settlement-date=2024-03-08';
         $client = new Client([
             'verify' => false,
             'timeout' => 240
@@ -37,7 +33,7 @@ class GeneralController extends Controller
                 $merchantDTO = $value->merchantDTO;
                 $transactionAuthorizedDto = $value->transactionAuthorizedDto;
 
-                $createdAt = Carbon::createFromFormat('Y-m-d', $yesterdatDate);
+                $createdAt = Carbon::createFromFormat('Y-m-d', '2024-03-08');
                 $batch = InternalBatch::create([
                     'batch_fk' => null,
                     'transaction_count' => $batchDto->transactionCount,

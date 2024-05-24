@@ -22,14 +22,18 @@
         <div class="card-header border-0 py-5 rounded-sm mb-5">
             <h3 class="card-title fw-bolder">Selected items</h3>
             <div class="row gy-3 g-xl-8">
-                <div class="col-xl-6">
+
+                <div class="col-xl-12 py-2">
                     <table id="bo_selected_items" class="table align-middle table-row-dashed fs-6 gy-5">
                         <thead>
                             <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
                                 <th>Settlement Date</th>
-                                {{-- <th>Batch</th> --}}
-                                <th>Bank</th>
-                                <th>MID</th>
+                                <th>Channel</th>
+                                <th>FTP File</th>
+                                <th>Number VA</th>
+                                <th>Auth Code</th>
+                                <th>SID</th>
+                                <th>RRN</th>
                                 <th class="text-end">BO Settlement</th>
                             </tr>
                         </thead>
@@ -39,13 +43,18 @@
                         </tfoot>
                     </table>
                 </div>
-                <div class="col-xl-6">
-                    <table id="bank_selected_items" class="table align-middle table-row-dashed fs-6 gy-5">
+
+                <div class="col-xl-12 py-2">
+                    <table id="partner_report_items" class="table align-middle table-row-dashed fs-6 gy-5">
                         <thead>
                             <tr class="text-start text-gray-400 fw-bolder fs-7 text-uppercase gs-0">
                                 <th>Statement Date</th>
-                                <th>Bank</th>
-                                <th>MID</th>
+                                <th>Channel</th>
+                                <th>FTP File</th>
+                                <th>Number VA</th>
+                                <th>Auth Code</th>
+                                <th>SID</th>
+                                <th>RRN</th>
                                 <th class="text-end">Partner Report</th>
                             </tr>
                         </thead>

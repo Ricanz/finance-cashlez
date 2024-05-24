@@ -53,9 +53,14 @@ var KTDatatablesServerSide = (function () {
                                 <div class="form-check form-check-sm form-check-custom form-check-solid text-end" data-bs-toggle="tooltip" data-bs-placement="top" title="Tooltip on top">
                                     <input onclick="checkBank(
                                         ${row.id}, 
-                                        '${to_date(row.transfer_date)}', 
-                                        '${row.header.processor}', 
-                                        '${row.mid}', '${row.amount_credit}'
+                                        '${to_date(row.date)}', 
+                                        '${row.channel}', 
+                                        '${row.ftp_file}',
+                                        '${row.number_va}',
+                                        '${row.auth_code}',
+                                        '${row.sid}',
+                                        '${row.rrn}',
+                                        '${row.net_amount}'
                                     )" id="checkbox_bank_${row.id}" 
                                     class="form-check-input boCheckbox" name="bo_check[]" type="checkbox" 
                                     value="1" data-kt-check="true" data-kt-check-target=".widget-9-check" />
@@ -222,7 +227,16 @@ var KTDatatablesServerSideBO = (function () {
                         // return meta.row + 1;
                         return `
                             <div class="form-check form-check-sm form-check-custom form-check-solid">
-                                <input onclick="checkBo(${row.id}, '${row.created_at}', '${row.processor}', '${row.mid}', '${row.bank_transfer}')" id="checkbox_bo_${row.id}" class="form-check-input" name="bo_check[]" type="checkbox" value="1" data-kt-check="true" data-kt-check-target=".widget-9-check" />
+                                <input onclick="checkBo(
+                                        ${row.id}, 
+                                        '${row.created_at}', 
+                                        '${row.channel.channel}', 
+                                        '${row.ftp_file}', 
+                                        '${row.number_va}', 
+                                        '${row.auth_code}', 
+                                        '${row.sid}', 
+                                        '${row.retrieval_number}', 
+                                        '${row.bank_payment}')" id="checkbox_bo_${row.id}" class="form-check-input" name="bo_check[]" type="checkbox" value="1" data-kt-check="true" data-kt-check-target=".widget-9-check" />
                             </div>
                         `;
                     },
@@ -343,8 +357,8 @@ var totalBankPayment = 0;
 var selectedBo = [];
 
 $("#refreshButton").on("click", function () {
-    var tbodyBank = document.querySelector("#bank_selected_items tbody");
-    var tfootBank = document.querySelector("#bank_selected_items tfoot");
+    var tbodyBank = document.querySelector("#partner_report_items tbody");
+    var tfootBank = document.querySelector("#partner_report_items tfoot");
     var tbodyBo = document.querySelector("#bo_selected_items tbody");
     var tfootBo = document.querySelector("#bo_selected_items tfoot");
 
@@ -368,7 +382,7 @@ $("#singleReconcile").on("submit", function (event) {
         headers: { 'X-CSRF-TOKEN': token },
         type : 'POST',
         data: formData,
-        url  : baseUrl + '/reconcile/single',
+        url  : baseUrl + '/reconcile/partner',
         dataType: 'JSON',
         cache: false,
         contentType: false,
@@ -411,13 +425,14 @@ $("#singleReconcile").on("submit", function (event) {
     });
 });
 
-function checkBank(id, settlementDate, bankType, mid, bankSettlement) {
+var totalNetAmount = 0;
+
+function checkBank(id, settlementDate, bankType, ftpFile, numberVa, authCode, sid, rrn, netAmount) {
+
     var checkbox = document.getElementById(`checkbox_bank_${id}`);
-    var tbody = document.querySelector("#bank_selected_items tbody");
-    var tfoot = document.querySelector("#bank_selected_items tfoot");
+    var tbody = document.querySelector("#partner_report_items tbody");
+    var tfoot = document.querySelector("#partner_report_items tfoot");
     if (checkbox.checked) {
-        // Clear existing rows
-        // tbody.innerHTML = "";
 
         selectedBanks.push(id);
 
@@ -426,15 +441,19 @@ function checkBank(id, settlementDate, bankType, mid, bankSettlement) {
         row.innerHTML = `
             <td>${settlementDate}</td>
             <td>${bankType}</td>
-            <td>${mid}</td>
-            <td class="text-end">${to_rupiah(parseInt(bankSettlement))}</td>
+            <td>${ftpFile}</td>
+            <td>${numberVa}</td>
+            <td>${authCode}</td>
+            <td>${sid}</td>
+            <td>${rrn}</td>
+            <td class="text-end">${to_rupiah(parseInt(netAmount))}</td>
         `;
-        totalBankSettlement = totalBankSettlement + parseInt(bankSettlement);
+        totalNetAmount = totalNetAmount + parseInt(netAmount);
         tbody.appendChild(row);
         tfoot.innerHTML = `
             <td colspan="2" class="text-start">Total</td>
-            <td colspan="2" class="text-end">${to_rupiah(
-                totalBankSettlement
+            <td colspan="6" class="text-end">${to_rupiah(
+                totalNetAmount
             )}</td>
         `;
     } else {
@@ -442,7 +461,7 @@ function checkBank(id, settlementDate, bankType, mid, bankSettlement) {
         if (idx !== -1) {
             selectedBanks.splice(idx, 1);
         }
-        totalBankSettlement = totalBankSettlement - parseInt(bankSettlement);
+        totalNetAmount = totalNetAmount - parseInt(netAmount);
         tfoot.innerHTML = "";
         tfoot.innerHTML = `
             <td colspan="2" class="text-start">Total</td>
@@ -453,8 +472,9 @@ function checkBank(id, settlementDate, bankType, mid, bankSettlement) {
     }
 }
 
-function checkBo(id, settlementDate, bankType, mid, bankPayment) {
+function checkBo(id, settlementDate, bankType, ftpFile, numberVa, authCode, sid, rrn, bankPayment) {
     var checkbox = document.getElementById(`checkbox_bo_${id}`);
+
     var tbody = document.querySelector("#bo_selected_items tbody");
     var tfoot = document.querySelector("#bo_selected_items tfoot");
     if (checkbox.checked) {
@@ -467,15 +487,19 @@ function checkBo(id, settlementDate, bankType, mid, bankPayment) {
         row.setAttribute("id", `bo_detail_${id}`);
         row.innerHTML = `
             <td>${to_date(settlementDate)}</td>
-            <td>${bankType}</td>
-            <td>${mid}</td>
+            <td>${bankType == 'null' ? '' : bankType}</td>
+            <td>${ftpFile == 'null' ? '' : ftpFile}</td>
+            <td>${numberVa == 'null' ? '' : numberVa}</td>
+            <td>${authCode == 'null' ? '' : authCode}</td>
+            <td>${sid == 'null' ? '' : sid}</td>
+            <td>${rrn == 'null' ? '' : rrn}</td>
             <td class="text-end">${to_rupiah(bankPayment)}</td>
         `;
         totalBankPayment = totalBankPayment + parseInt(bankPayment);
         tbody.appendChild(row);
         tfoot.innerHTML = `
             <td colspan="3" class="text-start">Total</td>
-            <td colspan="2" class="text-end">${to_rupiah(totalBankPayment)}</td>
+            <td colspan="5" class="text-end">${to_rupiah(totalBankPayment)}</td>
         `;
     } else {
         var idx = selectedBo.indexOf(id);

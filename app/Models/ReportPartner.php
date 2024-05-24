@@ -19,7 +19,8 @@ class ReportPartner extends Model
         'sid',
         'rrn',
         'net_amount',
-        'channel'
+        'channel',
+        'is_reconcile'
     ];
 
 
