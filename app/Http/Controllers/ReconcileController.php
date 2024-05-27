@@ -47,15 +47,21 @@ class ReconcileController extends Controller
         }
 
         // $channel = Channel::where('channel', $request->bank)->first();
-        $bankId = Utils::getChannelBankId($request->bank);
+        // $bankId = Utils::getChannelBankId($request->bank);
+        $bankId = $request->bank;
         $parameter = BankParameter::where('channel_id', $bankId)->first();
-
+        
         $reconResult = false;
         try {
+            if (!$parameter) {
+                return  response()->json(['message' => ['Reconcile Parameter is not setting yet.'], 'status' => false], 200);
+            }
             if ($parameter->bo_summary == 'mid' && $parameter->bank_statement == 'mid') {
                 $reconResult = Reconcile::midBoBank($BoStartDate, $BoEndDate, $bankId, $BsStartDate, $BsEndDate);
             } else if ($parameter->bo_summary == 'vlookup' && $parameter->bank_statement == 'vlookup') {
                 $reconResult = Reconcile::vlookupBoBank($BoStartDate, $BoEndDate, $bankId, $BsStartDate, $BsEndDate);
+            } else if ($parameter->report_partner == 'rrn' && $parameter->bo_detail_transaction == 'rrn') {
+                $reconResult = Reconcile::rrnBoPartner($BoStartDate, $BoEndDate, $bankId, $BsStartDate, $BsEndDate);
             } else {
                 return  response()->json(['message' => ['Reconcile Parameter is not setting yet.'], 'status' => false], 200);
             }
@@ -65,6 +71,7 @@ class ReconcileController extends Controller
             }
             return  response()->json(['message' => ['Successfully reconcile data!'], 'status' => true], 200);
         } catch (\Throwable $th) {
+            dd($th);
             return  response()->json(['message' => ['Error while reconcile, try again'], 'status' => false], 200);
         }
     }
@@ -200,7 +207,6 @@ class ReconcileController extends Controller
 
 
         foreach ($selectedBo as $key => $value) {
-            // $transaction = InternalTransaction::with('header')->where('id', $value)->first();
             $internalTransaction = InternalTransaction::with('header')->where('id', $value)->first();
             
             $trxCount = $trxCount + 1;
@@ -238,7 +244,7 @@ class ReconcileController extends Controller
                 
                 $carbonDate = $det->settlement_date;
 
-                $carbonDateParsed = Carbon::parse($carbonDate);
+                 $carbonDateParsed = Carbon::parse($carbonDate);
                 $oldRec = ReconcileResult::where('mid', $batchMid)
                     ->whereIn('status', ['NOT_MATCH', 'NOT_FOUND'])
                     ->whereDate('settlement_date', $carbonDateParsed)
