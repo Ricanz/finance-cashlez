@@ -221,7 +221,7 @@ class SettlementController extends Controller
             $query->where('transfer_date', '<=', $endDate);
         }
         $query->orderByDesc('id');
-        return DataTables::of($query->get())->addIndexColumn()->make(true);
+        return DataTables::of($query)->addIndexColumn()->make(true);
     }
 
     public function partnerReport(Request $request)
@@ -240,6 +240,6 @@ class SettlementController extends Controller
             $query->where('date', '<=', $endDate);
         }
         $query->orderByDesc('id');
-        return DataTables::of($query->get())->addIndexColumn()->make(true);
+        return DataTables::of($query)->addIndexColumn()->make(true);
     }
 }
