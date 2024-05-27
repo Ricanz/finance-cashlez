@@ -78,8 +78,8 @@ class BackOffice
                 }
             }
 
-            DB::commit();
             Log::info("Berhasil menjalankan schedule ke back office tanggal " . $yesterdatDate);
+            DB::commit();
             return  response()->json(['message'=> "Successfully get data!", 'status' => true], 200);
         } catch (RequestException $e) {
             DB::rollBack();
