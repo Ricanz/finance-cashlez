@@ -207,21 +207,26 @@ class SettlementController extends Controller
 
     public function bankSettlement(Request $request)
     {
-        $query = UploadBankDetail::with('header')->where('type_code', '001')->where('amount_credit', '>', 0);
-        if ($request->filled('bank')) {
-            $query->whereHas('header', function ($query) use ($request) {
-                $query->where('processor', $request->bank);
-            });
+        try {
+            $query = UploadBankDetail::with('header')->where('type_code', '001')->where('amount_credit', '>', 0);
+            if ($request->filled('bank')) {
+                $query->whereHas('header', function ($query) use ($request) {
+                    $query->where('processor', $request->bank);
+                });
+            }
+            if ($request->filled('startDate') && $request->filled('endDate')) {
+                $startDate = date('d/m/Y', strtotime($request->startDate));
+                $endDate = date('d/m/Y', strtotime($request->endDate));
+    
+                $query->where('transfer_date', '>=', $startDate);
+                $query->where('transfer_date', '<=', $endDate);
+            }
+            $query->orderByDesc('id');
+            dd("here");
+            return DataTables::of($query)->addIndexColumn()->make(true);
+        } catch (\Throwable $th) {
+            dd($th);
         }
-        if ($request->filled('startDate') && $request->filled('endDate')) {
-            $startDate = date('d/m/Y', strtotime($request->startDate));
-            $endDate = date('d/m/Y', strtotime($request->endDate));
-
-            $query->where('transfer_date', '>=', $startDate);
-            $query->where('transfer_date', '<=', $endDate);
-        }
-        $query->orderByDesc('id');
-        return DataTables::of($query)->addIndexColumn()->make(true);
     }
 
     public function partnerReport(Request $request)
