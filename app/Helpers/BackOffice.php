@@ -72,7 +72,10 @@ class BackOffice
                             'bank_fee_amount' => $trx->bankFeeAmount,
                             'merchant_fee_amount' => $trx->merchantFeeAmount,
                             'transaction_type' => $trx->transactionType,
-                            'tax_amount' => $trx->taxPayment
+                            'tax_amount' => $trx->taxPayment,
+                            'bank_id' => $batchDto->bankId,
+                            'created_at'=> $createdAt,
+                            'updated_at' => Carbon::now()
                         ]);
                     }
                 }

@@ -5,6 +5,7 @@ namespace App\Helpers;
 use App\Models\InternalBatch;
 use App\Models\InternalTransaction;
 use App\Models\ReconcileResult;
+use App\Models\ReportPartner;
 use App\Models\UploadBank;
 use App\Models\UploadBankDetail;
 use Carbon\Carbon;
@@ -257,45 +258,46 @@ class Reconcile
     public static function rrnBoPartner($BoStartDate, $BoEndDate, $channel, $BsStartDate, $BsEndDate)
     {
         $channelName = Utils::getChannel($channel);
-
+        
         DB::beginTransaction();
         try {
             $boData = InternalTransaction::selectRaw('
+                    COUNT(*) as transaction_count,
                     SUM(bank_payment) as bank_payment,
                     SUM(merchant_fee_amount) as merchant_fee_amount,
                     SUM(bank_fee_amount) as bank_fee_amount,
                     SUM(tax_amount) as tax_amount,
                     SUM(transaction_amount) as transaction_amount,
-                    rrn,
+                    retrieval_number,
                     DATE(created_at) as created_date
                 ')
                 ->where(DB::raw('DATE(created_at)'), '>=', $BoStartDate)
                 ->where(DB::raw('DATE(created_at)'), '<=', $BoEndDate)
                 ->where('bank_id', $channel)
-                ->where('status', 'SUCCESSFUL')
-                ->groupBy('mid', 'merchant_id', 'created_date')
+                ->groupBy('retrieval_number', 'created_date')
                 ->get();
     
             foreach ($boData as $key => $value) {
-                $modMid = substr($value->mid, 5);
-    
-                $bsData = UploadBankDetail::selectRaw('
-                        SUM(amount_credit) as amount_credit,
-                        mid, token_applicant
+                $rrn = $value['retrieval_number'];
+
+                $partnerData = ReportPartner::selectRaw('
+                        SUM(net_amount) as net_amount,
+                        token_applicant,
+                        rrn,
+                        DATE(created_at) as created_date
                     ')
                     ->with('header')
-                    ->where('mid', 'like', '%' . $modMid . '%')
-                    ->where('description2', $channelName)
-                    ->where('type_code', '001')
+                    ->where('rrn', $rrn)
+                    ->where('channel', $channelName)
                     ->where('is_reconcile', false)
-                    ->where(DB::raw('DATE(transfer_date)'), '>=', $BsStartDate)
-                    ->where(DB::raw('DATE(transfer_date)'), '<=', $BsEndDate)
-                    ->groupBy('mid', 'token_applicant')
+                    ->where(DB::raw('DATE(date)'), '>=', $BsStartDate)
+                    ->where(DB::raw('DATE(date)'), '<=', $BsEndDate)
+                    ->groupBy('rrn', 'created_date', 'token_applicant')
                     ->first();
-    
-                if ($bsData) {
-                    $bankSettlement = $bsData->amount_credit;
-                    $token_applicant = $bsData->header->token_applicant;
+                    
+                if ($partnerData) {
+                    $bankSettlement = $partnerData->net_amount;
+                    $token_applicant = $partnerData->header->token_applicant;
                 } else {
                     $bankSettlement = 0;
                     $token_applicant = null;
@@ -304,10 +306,10 @@ class Reconcile
                 $trxCount = $value->transaction_count;
                 $boSettlement = Utils::customRound($value->bank_transfer);
     
-                $feeMdrMerchant = $value->fee_mdr_merchant;
-                $feeBankMerchant = $value->fee_bank_merchant;
-                $taxPayment = $value->tax_payment;
-                $totalSales = $value->total_sales_amount;
+                $feeMdrMerchant = $value->merchant_fee_amount;
+                $feeBankMerchant = $value->bank_fee_amount;
+                $taxPayment = $value->tax_amount;
+                $totalSales = $value->transaction_amount;
     
                 $merchant_id = $value->merchant_id;
                 $sumTransaction = $value->transaction_amount;
@@ -320,14 +322,15 @@ class Reconcile
                 $diff = abs((float)$boSettlement - (float)$bankSettlement);
                 $treshold = Utils::calculateTreshold($trxCount);
                 $status = Utils::getStatusReconcile($treshold, $boSettlement, $bankSettlement);
+                
     
                 $reconcile = ReconcileResult::create([
                     'token_applicant' => $token_applicant,
-                    'statement_id' => $bsData ? $bsData->id : null,
-                    'request_id' => $bsData ? $bsData->header->id : null,
+                    'statement_id' => $partnerData ? $partnerData->id : null,
+                    'request_id' => $partnerData ? $partnerData->header->id : null,
                     'status' => $status,
                     // 'tid' => $tid,
-                    'mid' => $value->mid,
+                    'mid' => $rrn,
                     // 'batch_fk' => $batch_fk, 
                     'trx_counts' => $trxCount, // total transaksi 1 batch
                     'total_sales' => $totalSales, // sum transaction_amout di internal_taransaction 
@@ -350,11 +353,10 @@ class Reconcile
                     $uploadBank = UploadBank::where('token_applicant', $token_applicant)->update([
                         'is_reconcile' => true
                     ]);
-                    $bankDetail = UploadBankDetail::where('mid', 'like', '%' . $modMid . '%')
-                        ->where('description2', $channelName)
-                        ->where('type_code', '001')
-                        ->where(DB::raw('DATE(transfer_date)'), '>=', $BsStartDate)
-                        ->where(DB::raw('DATE(transfer_date)'), '<=', $BsEndDate)
+                    $partnerDetail = ReportPartner::where('rrn', 'like', '%' . $rrn . '%')
+                        ->where('channel', $channelName)
+                        ->where(DB::raw('DATE(date)'), '>=', $BsStartDate)
+                        ->where(DB::raw('DATE(date)'), '<=', $BsEndDate)
                         ->update([
                                 'is_reconcile' => $status == 'MATCH' ? true : false
                             ]);
@@ -363,6 +365,7 @@ class Reconcile
             DB::commit();
             return true;
         } catch (\Throwable $th) {
+            dd($th);
             DB::rollBack();
             return false;
         }

@@ -21,7 +21,10 @@ class InternalTransaction extends Model
         'transaction_type',
         'merchant_payment',
         'status',
-        'comparator_code'
+        'comparator_code',
+        'bank_id',
+        'created_at',
+        'updated_at'
     ];
 
     public function header()

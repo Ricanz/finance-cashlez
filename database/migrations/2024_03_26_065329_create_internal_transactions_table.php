@@ -31,6 +31,7 @@ return new class extends Migration
             $table->string('sid')->nullable();
             $table->string('ftp_file')->nullable();
             $table->string('number_va')->nullable();
+            $table->integer('bank_id')->nullable();
             $table->timestamps();
         });
     }
