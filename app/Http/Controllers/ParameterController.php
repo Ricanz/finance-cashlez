@@ -85,4 +85,17 @@ class ParameterController extends Controller
             return  response()->json(['message'=> "Failed store data!", 'status' => false], 200);
         }
     }
+
+    public function destroy($id)
+    {
+        $data = BankParameter::where('id', $id)->first();
+        if ($data->delete()) {
+            $response = [
+                'success' => true,
+                'message' => "Berhasil Hapus Data",
+            ];
+    
+            return response()->json($response, 200);
+        }
+    }
 }

@@ -69,6 +69,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/parameters/edit/{id}', [ParameterController::class, 'edit'])->name('parameter.edit');
     Route::post('/parameters/update', [ParameterController::class, 'update'])->name('parameter.update');
     Route::post('/parameters/store', [ParameterController::class, 'store'])->name('parameter.store');
+    Route::get('/parameters/{id}/destroy', [ParameterController::class, 'destroy'])->name('parameter.destroy');
 
 
 

@@ -66,7 +66,7 @@ var KTDatatablesServerSide = (function () {
 
                                 <!--begin::Menu item-->
                                 <div class="menu-item px-3">
-                                    <a href="javascript:void()" onclick="deleteRow('${data}')" class="menu-link px-3" data-kt-docs-table-filter="delete_row">
+                                    <a href="javascript:void()" onclick="deleteRow('${row.parameter.id}')" class="menu-link px-3" data-kt-docs-table-filter="delete_row">
                                         Delete
                                     </a>
                                 </div>
@@ -116,6 +116,7 @@ var KTDatatablesServerSide = (function () {
 })();
 
 function deleteRow($id) {
+    console.log($id);
     if (!$id) {
         console.error("ID is empty.");
         return;
@@ -134,7 +135,7 @@ function deleteRow($id) {
     }).then(function (result) {
         if (result.value) {
             $.ajax({
-                url: baseUrl + "/banks/destroy/" + $id,
+                url: baseUrl + "/parameters/" + $id + "/destroy",
                 type: "GET",
                 success: function (response) {
                     Swal.fire({
