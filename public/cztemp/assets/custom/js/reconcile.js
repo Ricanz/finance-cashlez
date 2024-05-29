@@ -95,7 +95,7 @@ var KTDatatablesServerSide = (function () {
                                 ${row.mid}
                                 </div>
                                 <div class="d-flex justify-content-end">
-                                    <a href="#" class="btn btn-sm btn-light-primary me-3 rounded-sm" data-bs-toggle="modal" data-bs-target="#kt_modal_new_target" onclick="mrcDetail('${row.token_applicant}')">${row.merchant ? row.merchant.reference_code : ''}</a>
+                                    <a href="#" class="btn btn-sm btn-light-primary me-3 rounded-sm" data-bs-toggle="modal" data-bs-target="#kt_modal_new_target" onclick="mrcDetail('${row.token_applicant}')">${row.merchant ? row.merchant.reference_code : 'Detail'}</a>
                                 </div>
                             `;
                             

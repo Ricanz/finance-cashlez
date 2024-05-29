@@ -268,13 +268,12 @@ class Reconcile
                     SUM(bank_fee_amount) as bank_fee_amount,
                     SUM(tax_amount) as tax_amount,
                     SUM(transaction_amount) as transaction_amount,
-                    retrieval_number,
-                    DATE(created_at) as created_date
+                    retrieval_number
                 ')
                 ->where(DB::raw('DATE(created_at)'), '>=', $BoStartDate)
                 ->where(DB::raw('DATE(created_at)'), '<=', $BoEndDate)
                 ->where('bank_id', $channel)
-                ->groupBy('retrieval_number', 'created_date')
+                ->groupBy('retrieval_number')
                 ->get();
     
             foreach ($boData as $key => $value) {
@@ -347,7 +346,7 @@ class Reconcile
                     // 'bank_transfer',
                     'created_by' => 'System',
                     'modified_by' => null,
-                    'settlement_date' => $value->created_date
+                    'settlement_date' => $partnerData->created_date
                 ]);
                 if ($token_applicant) {
                     $uploadBank = UploadBank::where('token_applicant', $token_applicant)->update([
