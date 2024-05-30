@@ -8,9 +8,9 @@
 		<meta property="og:locale" content="id_ID" />
 		<meta property="og:type" content="system" />
 		<meta property="og:title" content="Cashlez Reconciliation App" />
-		<meta property="og:url" content="https://cashlez.com" />
+		<meta property="og:url" content="https://finance.cashlez.com" />
 		<meta property="og:site_name" content="Cashlez | Reconciliation App" />
-		<link rel="canonical" href="https://cashlez.com" />
+		<link rel="canonical" href="https://finance.cashlez.com" />
 		<link rel="shortcut icon" href="{{ asset('favicon.ico')}}" />
     <!--begin::Fonts-->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" />
